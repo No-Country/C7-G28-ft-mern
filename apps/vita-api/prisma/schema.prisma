@@ -11,18 +11,30 @@ datasource db {
 }
 
 model User {
-  id        String      @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
   email     String   @unique
   hash      String
-  firstName String?
-  lastName  String?
-  role      String @default("user")
+  firstName String
+  lastName  String
+  role      Role @default(PATIENCE)
   vertificationCode String? @default(uuid())
-  passwordResetCode String? @default(uuid())
+  passwordResetCode String? 
   verified Boolean @default(false)
-  status String @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // status Status @default(ACTIVE)
 
   @@map("users")
 }
+
+enum Role {
+  SUPERADMIN
+  ADMIN
+  DOCTOR
+  PATIENCE
+}
+
+// enum Status {
+//   ACTIVE
+//   BANNED
+// }

@@ -9,6 +9,17 @@ export class AuthDto {
     @IsString()
     password: string
 
+    @IsNotEmpty()
+    @IsString()
+    firstName: string
+
+    @IsNotEmpty()
+    @IsString()
+    lastName: string
+
+    @IsString()
+    role: string
+
     private saludar(name: string) {
         console.log(`Hola ${name}`)
     }
