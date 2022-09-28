@@ -37,7 +37,7 @@ const surnames = [
 
 const createUsers = async (num: number) => {
     for (let i = 0; i < num; i++) {
-        const hash = await argon.hash(`password${i}`)
+        const hash = await argon.hash('password')
         const user = {
             firstName: `${names[i % names.length]}`,
             lastName: `${surnames[i % surnames.length]}`,
