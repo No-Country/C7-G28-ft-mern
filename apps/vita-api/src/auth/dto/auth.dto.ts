@@ -1,3 +1,6 @@
+/* eslint-disable indent */
+/* eslint-disable no-unused-vars */
+
 import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator'
 
 export enum Role {

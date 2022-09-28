@@ -1,5 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common'
+import { Role } from 'src/auth/dto'
 import { PrismaService } from 'src/prisma/prisma.service'
+import { EditUserDto } from './dto'
 
 @Injectable()
 export class UserService {
@@ -17,5 +19,17 @@ export class UserService {
         }
 
         return user
+    }
+
+    async updateUser(userId: number, dto: EditUserDto) {
+        const newUser = await this.prisma.user.update({
+            where: { id: userId },
+            data: {
+                ...dto,
+                role: dto.role as Role
+            }
+        })
+        delete newUser.hash
+        return newUser
     }
 }
