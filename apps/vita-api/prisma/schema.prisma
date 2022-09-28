@@ -16,7 +16,7 @@ model User {
   hash      String
   firstName String
   lastName  String
-  role      Role @default(PATIENCE)
+  role      Role
   vertificationCode String? @default(uuid())
   passwordResetCode String? 
   verified Boolean @default(false)
@@ -31,7 +31,7 @@ enum Role {
   SUPERADMIN
   ADMIN
   DOCTOR
-  PATIENCE
+  PATIENT
 }
 
 // enum Status {

@@ -1,10 +1,10 @@
-import { IsEmail, IsEmpty, IsEnum, IsNotEmpty, IsString } from 'class-validator'
+import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator'
 
 export enum Role {
     ADMIN = 'ADMIN',
     SUPERADMIN = 'SUPERADMIN',
     DOCTOR = 'DOCTOR',
-    PATIENCE = 'PATIENCE'
+    PATIENT = 'PATIENT'
 }
 
 export class AuthDtoSignUp {
