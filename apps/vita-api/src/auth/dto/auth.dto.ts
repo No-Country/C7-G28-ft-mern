@@ -1,6 +1,13 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator'
+import { IsEmail, IsEmpty, IsEnum, IsNotEmpty, IsString } from 'class-validator'
 
-export class AuthDto {
+export enum Role {
+    ADMIN = 'ADMIN',
+    SUPERADMIN = 'SUPERADMIN',
+    DOCTOR = 'DOCTOR',
+    PATIENCE = 'PATIENCE'
+}
+
+export class AuthDtoSignUp {
     @IsNotEmpty()
     @IsEmail()
     email: string
@@ -17,10 +24,16 @@ export class AuthDto {
     @IsString()
     lastName: string
 
-    @IsString()
+    @IsEnum(Role)
     role: string
+}
 
-    private saludar(name: string) {
-        console.log(`Hola ${name}`)
-    }
+export class AuthDtoSignIn {
+    @IsNotEmpty()
+    @IsEmail()
+    email: string
+
+    @IsNotEmpty()
+    @IsString()
+    password: string
 }
