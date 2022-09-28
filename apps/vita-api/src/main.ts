@@ -1,21 +1,22 @@
-import { Logger, ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+/* eslint-disable turbo/no-undeclared-env-vars */
+import { Logger, ValidationPipe } from '@nestjs/common'
+import { NestFactory } from '@nestjs/core'
+import { AppModule } from './app.module'
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const logger = new Logger('main');
+    const app = await NestFactory.create(AppModule)
+    const logger = new Logger('main')
 
-  app.setGlobalPrefix('api');
+    app.setGlobalPrefix('api')
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-    }),
-  );
+    app.useGlobalPipes(
+        new ValidationPipe({
+            whitelist: true,
+            forbidNonWhitelisted: true
+        })
+    )
 
-  await app.listen(process.env.PORT || 3000);
-  logger.log(`Application listening on port ${process.env.PORT || 3000}`);
+    await app.listen(process.env.PORT || 3000)
+    logger.log(`Application listening on port ${process.env.PORT || 3000}`)
 }
-bootstrap();
+bootstrap()
