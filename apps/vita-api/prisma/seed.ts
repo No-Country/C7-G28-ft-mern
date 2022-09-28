@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import * as argon from 'argon2'
 
 enum Role {
     PATIENT = 'PATIENT',
@@ -9,15 +10,43 @@ const prisma = new PrismaClient()
 
 const users = []
 
-for (let i = 0; i < 10; i++) {
-    const user = {
-        firstName: `User ${i}`,
-        lastName: `User ${i}`,
-        email: `user${i}@gmail.com`,
-        hash: `password${i}`,
-        role: i > 8 ? Role.DOCTOR : Role.PATIENT
+const names = [
+    'John',
+    'Paul',
+    'George',
+    'Ringo',
+    'Pete',
+    'Mike',
+    'Dave',
+    'John',
+    'Paul'
+]
+
+const surnames = [
+    'Lennon',
+    'McCartney',
+    'Harrison',
+    'Starr',
+    'Townshend',
+    'Davies',
+    'Gilmour',
+    'Bonham',
+    'Rodgers',
+    'Weller'
+]
+
+const createUsers = async (num: number) => {
+    for (let i = 0; i < num; i++) {
+        const hash = await argon.hash(`password${i}`)
+        const user = {
+            firstName: `${names[i % names.length]}`,
+            lastName: `${surnames[i % surnames.length]}`,
+            email: `user${i + 1}@gmail.com`,
+            hash,
+            role: i > num - 3 ? Role.DOCTOR : Role.PATIENT
+        }
+        users.push(user)
     }
-    users.push(user)
 }
 
 const main = async users => {
@@ -27,11 +56,12 @@ const main = async users => {
         })
     }
 }
-
-main(users)
-    .catch(e => {
-        throw e
-    })
-    .finally(() => {
-        prisma.$disconnect()
-    })
+createUsers(20).then(() => {
+    main(users)
+        .catch(e => {
+            throw e
+        })
+        .finally(() => {
+            prisma.$disconnect()
+        })
+})
