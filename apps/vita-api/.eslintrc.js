@@ -5,7 +5,6 @@ module.exports = {
     },
     extends: ['custom'],
     rules: {
-        'no-useless-constructor': 'off',
-        'decorator-position/decorator-position': 'off'
+        'no-useless-constructor': 'off'
     }
 }

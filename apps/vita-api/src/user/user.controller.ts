@@ -1,4 +1,5 @@
-import { Controller, Get } from '@nestjs/common'
+import { Controller, Get, UseGuards } from '@nestjs/common'
+import { AuthGuard } from '@nestjs/passport'
 import { UserService } from './user.service'
 
 @Controller('users')
@@ -10,6 +11,9 @@ export class UserController {
         return this.UserService.getAllUsers()
     }
 
-    @Get(':id')
-    getUser() {}
+    @UseGuards(AuthGuard('jwt'))
+    @Get('me')
+    getMe() {
+        return { me: 'User Info' }
+    }
 }
