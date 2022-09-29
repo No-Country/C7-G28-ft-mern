@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { createTransport, TransportOptions } from 'nodemailer'
+import { createTransport, Transporter, TransportOptions } from 'nodemailer'
 import { google } from 'googleapis'
+import { MailOptions } from './models'
 
 @Injectable()
 export class NodemailerService {
-    constructor(private config: ConfigService, OAuth2) {}
+    constructor(private config: ConfigService) {}
 
     private getNodemailerConfig() {
         const config = {
@@ -22,29 +23,12 @@ export class NodemailerService {
         return config
     }
 
-    getOptionsGenerator(name, email, message) {
-        const options = {
-            from: 'Vita App',
-            to: email,
-            subject: 'Welcome to our app',
-            text: `Hello ${name}, ${message}`,
-            html: `<b>Hello ${name}, ${message}</b>`
-        }
-        return options
+    private async sendMail(transport: Transporter, options: MailOptions) {
+        const info = await transport.sendMail(options)
+        return info
     }
 
-    async sendMail(transport, options) {
-        const info = await transport.sendMail({
-            from: options.from,
-            to: options.to,
-            subject: options.subject,
-            text: options.text,
-            html: options.html
-        })
-        console.log('Message sent: %s', info)
-    }
-
-    async mailSender(cb, options) {
+    async mailSender(options: MailOptions) {
         const account = this.getNodemailerConfig()
         const OAuth2 = google.auth.OAuth2
         const oauth2Client = new OAuth2(
@@ -58,7 +42,10 @@ export class NodemailerService {
         oauth2Client.getAccessToken((err, token) => {
             if (err) throw new Error(err.message)
             account.auth.accessToken = token
-            cb(createTransport(account as TransportOptions), options)
+            return this.sendMail(
+                createTransport(account as TransportOptions),
+                options
+            )
         })
     }
 }
