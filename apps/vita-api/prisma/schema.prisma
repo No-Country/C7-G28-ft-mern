@@ -17,14 +17,18 @@ model User {
   firstName String
   lastName  String
   role      Role
-  contact   Contact?
+  birthDate String
+  phone     String
+  address   String
+  city      String
+  state     String
+  country   String
+  zipCode     String
   vertificationCode String? @default(uuid())
   passwordResetCode String?
   verified Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  // status Status @default(ACTIVE)
 
   @@map("users")
 }
@@ -36,19 +40,14 @@ enum Role {
   PATIENT
 }
 
-model Contact {
-  id        Int      @id @default(autoincrement())
-  country   String
-  state     String
-  city      String
-  zipCode     String
-  address   String
-  phone     String
-  userId    Int @unique
-  user      User     @relation(fields: [userId], references: [id])
-}
-
-// enum Status {
-//   ACTIVE
-//   BANNED
+// model Contact {
+//   id        Int      @id @default(autoincrement())
+//   country   String
+//   state     String
+//   city      String
+//   zipCode     String
+//   address   String
+//   phone     String
+//   userId    Int @unique
+//   user      User     @relation(fields: [userId], references: [id])
 // }
