@@ -17,11 +17,13 @@ model User {
   firstName String
   lastName  String
   role      Role
+  contact   Contact?
   vertificationCode String? @default(uuid())
-  passwordResetCode String? 
+  passwordResetCode String?
   verified Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
   // status Status @default(ACTIVE)
 
   @@map("users")
@@ -32,6 +34,18 @@ enum Role {
   ADMIN
   DOCTOR
   PATIENT
+}
+
+model Contact {
+  id        Int      @id @default(autoincrement())
+  country   String
+  state     String
+  city      String
+  zipCode     String
+  address   String
+  phone     String
+  userId    Int @unique
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 // enum Status {
