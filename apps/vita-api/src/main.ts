@@ -7,6 +7,8 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule)
     const logger = new Logger('main')
 
+    const PORT = process.env.PORT || 3001
+
     app.setGlobalPrefix('api')
 
     app.useGlobalPipes(
@@ -16,7 +18,7 @@ async function bootstrap() {
         })
     )
 
-    await app.listen(process.env.PORT || 3000)
-    logger.log(`Application listening on port ${process.env.PORT || 3000}`)
+    await app.listen(PORT)
+    logger.log(`Application listening on port ${PORT}`)
 }
 bootstrap()
