@@ -6,6 +6,7 @@ import * as argon from 'argon2'
 import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
 import { NodemailerService } from 'src/nodemailer/nodemailer.service'
+import { ValidationTemplate } from './template'
 
 @Injectable()
 export class AuthService {
@@ -75,10 +76,7 @@ export class AuthService {
                 to: user.email,
                 subject: 'Welcome to Vita App',
                 text: 'Welcome to Vita App',
-                html: `<h1>Welcome to Vita App</h1>
-            <p>Thank you for registering with Vita App. Please click the link below to verify your email address.</p>
-            <a href="${verifyLink}">Verify Email</a>
-            `
+                html: ValidationTemplate(verifyLink, user.firstName)
             }
 
             const mailInfo = await this.mailer.mailSender(mailOptions)
