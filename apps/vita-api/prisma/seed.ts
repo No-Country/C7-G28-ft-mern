@@ -67,19 +67,25 @@ const cities = [
 const createUsers = async (num: number) => {
     for (let i = 0; i < num; i++) {
         const hash = await argon.hash('password')
+        const day = Math.floor(Math.random() * 30) + 1
+        const month = Math.floor(Math.random() * 12) + 1
+        const year = Math.floor(Math.random() * 50) + 1950
         const user = {
             firstName: `${names[i % names.length]}`,
             lastName: `${surnames[i % surnames.length]}`,
             email: `user${i + 1}@gmail.com`,
             hash,
             role: i > num - 3 ? Role.DOCTOR : Role.PATIENT,
-            birthDate: '09/09/1999',
+            birthDate: `${day < 10 ? '0' + day : day}/${
+                month < 10 ? '0' + month : month
+            }/${year}`,
             phone: '123456789' + i,
-            address: 'E. Lopez' + i,
+            address: 'E. Lopez ' + i,
             city: `${cities[i % cities.length]}`,
             state: `${states[i % states.length]}`,
             country: `${countries[i % countries.length]}`,
-            zipCode: `${i + 1000}`
+            zipCode: `${i + 1000}`,
+            verified: true
         }
         users.push(user)
     }

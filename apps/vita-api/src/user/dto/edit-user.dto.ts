@@ -19,4 +19,32 @@ export class EditUserDto {
     @IsOptional()
     @IsEnum(Role)
     role?: string
+
+    @IsOptional()
+    @IsString()
+    birthDate?: string
+
+    @IsOptional()
+    @IsString()
+    phone?: string
+
+    @IsOptional()
+    @IsString()
+    address?: string
+
+    @IsOptional()
+    @IsString()
+    city?: string
+
+    @IsOptional()
+    @IsString()
+    state?: string
+
+    @IsOptional()
+    @IsString()
+    country?: string
+
+    @IsOptional()
+    @IsString()
+    zipCode?: string
 }

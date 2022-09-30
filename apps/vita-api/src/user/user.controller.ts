@@ -34,7 +34,7 @@ export class UserController {
     }
 
     @UseGuards(JwtGuard)
-    @Put()
+    @Put('update')
     updateUser(@GetUser('id') userId: number, @Body() dto: EditUserDto) {
         return this.UserService.updateUser(userId, dto)
     }
