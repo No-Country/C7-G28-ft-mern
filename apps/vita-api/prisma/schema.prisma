@@ -11,20 +11,34 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  hash      String
-  firstName String
-  lastName  String
-  role      Role
-  vertificationCode String? @default(uuid())
-  passwordResetCode String? 
-  verified Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                Int           @id @default(autoincrement())
+  email             String        @unique
+  hash              String
+  firstName         String
+  lastName          String
+  role              Role
+  vertificationCode String?       @default(uuid())
+  passwordResetCode String?
+  verified          Boolean       @default(false)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
   // status Status @default(ACTIVE)
+  appointments      Appointment[]
 
   @@map("users")
+}
+
+model Appointment {
+  id                Int               @id @default(autoincrement())
+  User              User              @relation(fields: [userId], references: [id])
+  userId            Int
+  date              String
+  time              String
+  statusAppointment StatusAppointment @default(PENDING)
+
+  status Status @default(ACTIVE)
+
+  @@map("appointments")
 }
 
 enum Role {
@@ -34,7 +48,13 @@ enum Role {
   PATIENT
 }
 
-// enum Status {
-//   ACTIVE
-//   BANNED
-// }
+enum StatusAppointment {
+  PENDING
+  APPROVED
+  CANCELED
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+}
