@@ -4,7 +4,13 @@ module.exports = {
         node: true,
         es2021: true
     },
-    extends: ['next', 'turbo', 'prettier', 'standard'],
+    extends: [
+        'next',
+        'turbo',
+        'prettier',
+        'standard',
+        'plugin:storybook/recommended'
+    ],
     parser: '@typescript-eslint/parser',
     parserOptions: {
         ecmaVersion: 12,
