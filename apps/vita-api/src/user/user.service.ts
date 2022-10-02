@@ -32,4 +32,19 @@ export class UserService {
         delete newUser.hash
         return newUser
     }
+
+    async verifyUser(token: string, id: number) {
+        const user = await this.prisma.user.findUnique({ where: { id } })
+        if (!user) throw new ForbiddenException('User not found')
+
+        if (user.vertificationCode !== token) {
+            throw new ForbiddenException('Invalid token')
+        }
+
+        await this.prisma.user.update({
+            where: { id },
+            data: { verified: true, vertificationCode: null }
+        })
+        return { message: 'User verified' }
+    }
 }

@@ -29,6 +29,34 @@ export class AuthDtoSignUp {
 
     @IsEnum(Role)
     role: string
+
+    @IsNotEmpty()
+    @IsString()
+    country: string
+
+    @IsNotEmpty()
+    @IsString()
+    state: string
+
+    @IsNotEmpty()
+    @IsString()
+    city: string
+
+    @IsNotEmpty()
+    @IsString()
+    address: string
+
+    @IsNotEmpty()
+    @IsString()
+    zipCode: string
+
+    @IsNotEmpty()
+    @IsString()
+    phone: string
+
+    @IsNotEmpty()
+    @IsString()
+    birthDate: string
 }
 
 export class AuthDtoSignIn {

@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common'
+import {
+    Body,
+    Controller,
+    Get,
+    Param,
+    Put,
+    Query,
+    UseGuards
+} from '@nestjs/common'
 import { User } from '@prisma/client'
 import { GetUser } from 'src/auth/decorator'
 import { JwtGuard } from 'src/auth/guard'
@@ -19,15 +27,20 @@ export class UserController {
         return user
     }
 
-    @Get(':id')
+    @Get('one/:id')
     getUserById(@Param('id') id: string) {
         console.log(id)
         return this.UserService.getUserById(Number(id))
     }
 
     @UseGuards(JwtGuard)
-    @Put()
+    @Put('update')
     updateUser(@GetUser('id') userId: number, @Body() dto: EditUserDto) {
         return this.UserService.updateUser(userId, dto)
+    }
+
+    @Get('verify')
+    verifyUser(@Query('token') token: string, @Query('id') id: string) {
+        return this.UserService.verifyUser(token, Number(id))
     }
 }
