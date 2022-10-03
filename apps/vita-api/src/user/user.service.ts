@@ -8,23 +8,24 @@ export class UserService {
     constructor(private prisma: PrismaService) {}
 
     async getAllUsers() {
-        return this.prisma.user.findMany()
+        return this.prisma.user.findMany({
+            include: {
+                speciality: true
+            }
+        })
     }
 
     async getUserById(id: number) {
-        const user = await this.prisma.user.findUnique({ where: { id } })
+        const user = await this.prisma.user.findUnique({
+            where: { id },
+            include: { speciality: true }
+        })
 
         if (!user) {
             throw new ForbiddenException('User not found')
         }
 
-        if (user.specialityId) {
-            const speciality = await this.prisma.speciality.findUnique({
-                where: { id: user.specialityId }
-            })
-            return { ...user, speciality }
-        }
-
+        delete user.hash
         return user
     }
 
@@ -56,26 +57,32 @@ export class UserService {
     }
 
     async addSpeciality(speciality: string, userId: number) {
-        const user = await this.prisma.user.findUnique({
-            where: { id: userId }
-        })
-        if (!user) throw new ForbiddenException('User not found')
+        // const user = await this.prisma.user.findUnique({
+        //     where: { id: userId }
+        // })
+        // if (!user) throw new ForbiddenException('User not found')
 
-        const spec = await this.prisma.speciality.findUnique({
-            where: { name: speciality }
-        })
-        if (!spec) throw new ForbiddenException('Speciality not found')
-
-        const newUser = await this.prisma.user.update({
-            where: { id: userId },
-            data: {
-                speciality: {
-                    connect: {
-                        name: speciality
+        // const spec = await this.prisma.speciality.findUnique({
+        //     where: { name: speciality }
+        // })
+        // if (!spec) throw new ForbiddenException('Speciality not found')
+        try {
+            const newUser = await this.prisma.user.update({
+                where: { id: userId },
+                data: {
+                    speciality: {
+                        connect: {
+                            name: speciality
+                        }
                     }
+                },
+                include: {
+                    speciality: true
                 }
-            }
-        })
-        return { user: newUser }
+            })
+            return newUser
+        } catch (error) {
+            throw new ForbiddenException(error)
+        }
     }
 }
