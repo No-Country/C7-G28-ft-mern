@@ -1,26 +1,45 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAppointmentDto } from './dto/create-appointment.dto';
-import { UpdateAppointmentDto } from './dto/update-appointment.dto';
+import { Injectable, InternalServerErrorException } from '@nestjs/common'
+import { User } from '@prisma/client'
+import { PrismaService } from '../prisma/prisma.service'
+import { CreateAppointmentDto } from './dto/create-appointment.dto'
+import { UpdateAppointmentDto } from './dto/update-appointment.dto'
 
 @Injectable()
 export class AppointmentService {
-  create(createAppointmentDto: CreateAppointmentDto) {
-    return 'This action adds a new appointment';
-  }
+    constructor(private readonly prisma: PrismaService) {}
 
-  findAll() {
-    return `This action returns all appointment`;
-  }
+    async createAppointment(data: CreateAppointmentDto, user: User) {
+        try {
+            const { date, doctorId, time } = data
 
-  findOne(id: number) {
-    return `This action returns a #${id} appointment`;
-  }
+            const appointment = await this.prisma.appointment.create({
+                data: {
+                    date,
+                    time,
+                    doctorId,
+                    userId: user.id,
+                    statusAppointment: 'PENDING',
+                    status: 'ACTIVE'
+                },
+                select: {
+                    id: true,
+                    date: true,
+                    time: true,
+                    statusAppointment: true,
+                    doctorId: true,
+                    userId: true,
+                    status: false
+                }
+            })
 
-  update(id: number, updateAppointmentDto: UpdateAppointmentDto) {
-    return `This action updates a #${id} appointment`;
-  }
+            return appointment
+        } catch (error) {
+            this.handleExceptions(error)
+        }
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} appointment`;
-  }
+    private handleExceptions(error: any): never {
+        console.log(error)
+        throw new InternalServerErrorException(`Please check logs`)
+    }
 }
