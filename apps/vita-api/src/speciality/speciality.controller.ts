@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common'
 import { SpecialityDto } from './dto'
 import { SpecialityService } from './speciality.service'
 
@@ -19,5 +19,10 @@ export class SpecialityController {
     @Post('create')
     async createSpeciality(@Body() speciality: SpecialityDto) {
         return await this.SpecialityService.createSpeciality(speciality)
+    }
+
+    @Delete('delete/:name')
+    async deleteSpeciality(@Param('name') name: string) {
+        return await this.SpecialityService.deleteSpeciality(name)
     }
 }

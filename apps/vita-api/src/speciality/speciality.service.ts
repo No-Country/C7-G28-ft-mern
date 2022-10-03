@@ -4,21 +4,43 @@ import { SpecialityDto } from './dto'
 
 @Injectable()
 export class SpecialityService {
-    constructor(prisma: PrismaService) {}
+    constructor(private prisma: PrismaService) {}
 
-    getAllSpecialities() {
-        return [
-            { id: 1, name: 'Speciality 1' },
-            { id: 2, name: 'Speciality 2' },
-            { id: 3, name: 'Speciality 3' }
-        ]
+    async getAllSpecialities() {
+        const specialities = await this.prisma.speciality.findMany()
+        return { specialities }
     }
 
-    getOneSpeciality(name: string) {
-        return { id: 1, name: 'Speciality 1' }
+    async getOneSpeciality(name: string) {
+        const speciality = await this.prisma.speciality.findUnique({
+            where: {
+                name
+            }
+        })
+        return { speciality }
     }
 
-    createSpeciality(speciality: SpecialityDto) {
+    async createSpeciality(speciality: SpecialityDto) {
+        const newSpeciality = await this.prisma.speciality.upsert({
+            create: {
+                ...speciality
+            },
+            update: {
+                ...speciality
+            },
+            where: {
+                name: speciality.name as string
+            }
+        })
+        return { speciality: newSpeciality }
+    }
+
+    async deleteSpeciality(name: string) {
+        const speciality = await this.prisma.speciality.delete({
+            where: {
+                name
+            }
+        })
         return { speciality }
     }
 }
