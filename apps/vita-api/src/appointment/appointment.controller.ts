@@ -6,7 +6,8 @@ import {
     Get,
     Patch,
     Query,
-    Param
+    Param,
+    Delete
 } from '@nestjs/common'
 import { User } from '@prisma/client'
 import { JwtGuard } from '../auth/guard'
@@ -29,5 +30,11 @@ export class AppointmentController {
     @UseGuards(JwtGuard)
     create(@Body() data: CreateAppointmentDto, @GetUser() user: User) {
         return this.appointmentService.createAppointment(data, user)
+    }
+
+    @Delete(':id')
+    @UseGuards(JwtGuard)
+    delete(@Param('id') id: string) {
+        return this.appointmentService.deleteAppointment(+id)
     }
 }

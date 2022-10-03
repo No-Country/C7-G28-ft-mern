@@ -61,6 +61,17 @@ export class AppointmentService {
         }
     }
 
+    async deleteAppointment(id: number) {
+        try {
+            await this.prisma.appointment.update({
+                where: { id },
+                data: { status: 'INACTIVE' }
+            })
+        } catch (error) {
+            this.handleExceptions(error)
+        }
+    }
+
     private handleExceptions(error: any): never {
         if (error.code === 'P2025')
             throw new BadRequestException(error.meta.cause)
