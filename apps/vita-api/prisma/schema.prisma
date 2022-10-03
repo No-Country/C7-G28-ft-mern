@@ -33,6 +33,7 @@ model Appointment {
   User              User              @relation(fields: [userId], references: [id])
   userId            Int
   date              String
+  doctorId          Int
   time              String
   statusAppointment StatusAppointment @default(PENDING)
 
