@@ -34,8 +34,8 @@ export class AppointmentService {
         try {
             const { date, time, statusAppointment = 'PENDING' } = data
 
-            const appointment = await this.prisma.appointment.update({
-                where: { id },
+            const appointment = await this.prisma.appointment.updateMany({
+                where: { id, status: Status.ACTIVE },
                 data: {
                     date,
                     time,
@@ -81,8 +81,8 @@ export class AppointmentService {
 
     async deleteAppointment(id: number) {
         try {
-            await this.prisma.appointment.update({
-                where: { id },
+            await this.prisma.appointment.updateMany({
+                where: { id, status: Status.ACTIVE },
                 data: { status: 'INACTIVE' }
             })
         } catch (error) {
