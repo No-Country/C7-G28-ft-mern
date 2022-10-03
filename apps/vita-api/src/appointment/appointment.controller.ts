@@ -26,6 +26,12 @@ export class AppointmentController {
         return this.appointmentService.findOneAppointment(+id)
     }
 
+    @Get()
+    @UseGuards(JwtGuard)
+    findAll(@Query('doctorId') doctorId: string) {
+        return this.appointmentService.findAllAppointments(+doctorId)
+    }
+
     @Patch(':id')
     @UseGuards(JwtGuard)
     update(@Param('id') id: string, @Body() data: UpdateAppointmentDto) {

@@ -12,6 +12,44 @@ import { UpdateAppointmentDto } from './dto/update-appointment.dto'
 export class AppointmentService {
     constructor(private readonly prisma: PrismaService) {}
 
+    async findAllAppointments(doctorId: number) {
+        try {
+            let appointments = null
+
+            if (doctorId > 0) {
+                appointments = await this.prisma.appointment.findMany({
+                    where: { doctorId, status: Status.ACTIVE },
+                    select: {
+                        id: true,
+                        date: true,
+                        time: true,
+                        statusAppointment: true,
+                        doctorId: true,
+                        userId: true,
+                        status: false
+                    }
+                })
+            } else {
+                appointments = await this.prisma.appointment.findMany({
+                    where: { status: Status.ACTIVE },
+                    select: {
+                        id: true,
+                        date: true,
+                        time: true,
+                        statusAppointment: true,
+                        doctorId: true,
+                        userId: true,
+                        status: false
+                    }
+                })
+            }
+
+            return appointments
+        } catch (error) {
+            this.handleExceptions(error)
+        }
+    }
+
     async findOneAppointment(id: number) {
         const appointment = await this.prisma.appointment.findFirst({
             where: { id, status: Status.ACTIVE },
