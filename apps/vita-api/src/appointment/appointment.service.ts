@@ -3,7 +3,7 @@ import {
     Injectable,
     InternalServerErrorException
 } from '@nestjs/common'
-import { StatusAppointment, User } from '@prisma/client'
+import { StatusAppointment, User, Status } from '@prisma/client'
 import { PrismaService } from '../prisma/prisma.service'
 import { CreateAppointmentDto } from './dto/create-appointment.dto'
 import { UpdateAppointmentDto } from './dto/update-appointment.dto'
@@ -11,6 +11,24 @@ import { UpdateAppointmentDto } from './dto/update-appointment.dto'
 @Injectable()
 export class AppointmentService {
     constructor(private readonly prisma: PrismaService) {}
+
+    async findOneAppointment(id: number) {
+        const appointment = await this.prisma.appointment.findFirst({
+            where: { id, status: Status.ACTIVE },
+            select: {
+                id: true,
+                date: true,
+                time: true,
+                statusAppointment: true,
+                doctorId: true,
+                status: false
+            }
+        })
+
+        if (!appointment) throw new BadRequestException('Appointment not found')
+
+        return appointment
+    }
 
     async updateAppointment(id: number, data: UpdateAppointmentDto) {
         try {

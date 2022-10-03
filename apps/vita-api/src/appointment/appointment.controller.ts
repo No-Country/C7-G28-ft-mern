@@ -20,6 +20,12 @@ import { UpdateAppointmentDto } from './dto/update-appointment.dto'
 export class AppointmentController {
     constructor(private readonly appointmentService: AppointmentService) {}
 
+    @Get(':id')
+    @UseGuards(JwtGuard)
+    findOne(@Param('id') id: string) {
+        return this.appointmentService.findOneAppointment(+id)
+    }
+
     @Patch(':id')
     @UseGuards(JwtGuard)
     update(@Param('id') id: string, @Body() data: UpdateAppointmentDto) {
