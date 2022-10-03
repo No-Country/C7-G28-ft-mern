@@ -1,4 +1,13 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common'
+import {
+    Controller,
+    Post,
+    Body,
+    UseGuards,
+    Get,
+    Patch,
+    Query,
+    Param
+} from '@nestjs/common'
 import { User } from '@prisma/client'
 import { JwtGuard } from '../auth/guard'
 import { GetUser } from '../auth/decorator'
@@ -9,6 +18,12 @@ import { UpdateAppointmentDto } from './dto/update-appointment.dto'
 @Controller('appointment')
 export class AppointmentController {
     constructor(private readonly appointmentService: AppointmentService) {}
+
+    @Patch(':id')
+    @UseGuards(JwtGuard)
+    update(@Param('id') id: string, @Body() data: UpdateAppointmentDto) {
+        return this.appointmentService.updateAppointment(+id, data)
+    }
 
     @Post()
     @UseGuards(JwtGuard)
