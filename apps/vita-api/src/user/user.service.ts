@@ -12,10 +12,17 @@ export class UserService {
     }
 
     async getUserById(id: number) {
-        const user = this.prisma.user.findUnique({ where: { id } })
+        const user = await this.prisma.user.findUnique({ where: { id } })
 
         if (!user) {
             throw new ForbiddenException('User not found')
+        }
+
+        if (user.specialityId) {
+            const speciality = await this.prisma.speciality.findUnique({
+                where: { id: user.specialityId }
+            })
+            return { ...user, speciality }
         }
 
         return user
@@ -46,5 +53,29 @@ export class UserService {
             data: { verified: true, vertificationCode: null }
         })
         return { message: 'User verified' }
+    }
+
+    async addSpeciality(speciality: string, userId: number) {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId }
+        })
+        if (!user) throw new ForbiddenException('User not found')
+
+        const spec = await this.prisma.speciality.findUnique({
+            where: { name: speciality }
+        })
+        if (!spec) throw new ForbiddenException('Speciality not found')
+
+        const newUser = await this.prisma.user.update({
+            where: { id: userId },
+            data: {
+                speciality: {
+                    connect: {
+                        name: speciality
+                    }
+                }
+            }
+        })
+        return { user: newUser }
     }
 }

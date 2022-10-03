@@ -3,6 +3,7 @@ import {
     Controller,
     Get,
     Param,
+    Patch,
     Put,
     Query,
     UseGuards
@@ -29,7 +30,6 @@ export class UserController {
 
     @Get('one/:id')
     getUserById(@Param('id') id: string) {
-        console.log(id)
         return this.UserService.getUserById(Number(id))
     }
 
@@ -42,5 +42,13 @@ export class UserController {
     @Get('verify')
     verifyUser(@Query('token') token: string, @Query('id') id: string) {
         return this.UserService.verifyUser(token, Number(id))
+    }
+
+    @Patch('speciality')
+    addSpeciality(
+        @Query('sp') speciality: string,
+        @Query('id') userId: string
+    ) {
+        return this.UserService.addSpeciality(speciality, Number(userId))
     }
 }
