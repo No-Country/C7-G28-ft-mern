@@ -12,3 +12,14 @@ services:
             - POSTGRES_PASSWORD=${DB_PASSWORD}
             - POSTGRES_DB=${DB_NAME}
         container_name: nest-api
+    test-db:
+        image: postgres:14.3
+        restart: always
+        ports:
+            - '5435:5432'
+        environment:
+            - DATABASE_HOST=${DB_HOST}
+            - POSTGRES_USER=${DB_USERNAME}
+            - POSTGRES_PASSWORD=${DB_PASSWORD}
+            - POSTGRES_DB=${DB_NAME}
+        container_name: nest-api-test
