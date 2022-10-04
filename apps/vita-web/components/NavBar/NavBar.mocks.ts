@@ -1,7 +1,7 @@
 import { INavBar } from './NavBar'
 
 const base: INavBar = {
-    sampleTextProp: 'Hello world!'
+    isLogged: false
 }
 
 export const mockNavBarProps = {

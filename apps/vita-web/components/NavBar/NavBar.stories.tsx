@@ -6,7 +6,13 @@ export default {
     title: 'NavBar/NavBar',
     component: NavBar,
     // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
-    argTypes: {}
+    argTypes: {
+        isLogged: {
+            control: {
+                type: 'boolean'
+            }
+        }
+    }
 } as ComponentMeta<typeof NavBar>
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args

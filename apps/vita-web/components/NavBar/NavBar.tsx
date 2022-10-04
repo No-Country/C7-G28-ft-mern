@@ -1,11 +1,11 @@
 import React from 'react'
 
 export interface INavBar {
-    sampleTextProp: string
+    isLogged: boolean
 }
 
-const NavBar: React.FC<INavBar> = ({ sampleTextProp }) => {
-    return <div className="bg-red-400">{sampleTextProp}</div>
+const NavBar: React.FC<INavBar> = ({ isLogged }) => {
+    return <div className="bg-green-400">{isLogged && 'hola'}</div>
 }
 
 export default NavBar
