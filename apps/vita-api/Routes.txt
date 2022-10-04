@@ -1,0 +1,70 @@
+Rutas para autenticacion de usuarios :
+  => /api/auth/signin // Metodo POST
+    Recibe por BODY = {
+      email : string,
+      password : string
+    }
+    
+  => /api/auth/signup // Metodo POST
+    Recibe por BODY = {
+      email : string,
+      password : string,
+      firstName : string,
+      lastName : string,
+      role : "ADMIN" | "SUPERADMIN" | "DOCTOR" | "PATIENT",
+      country : string,
+      state : string,
+      city : string,
+      address : string,
+      zipCode : string,
+      phone : string,
+      birthDate : string
+    }
+
+Rutas para manejo de las especialidades :
+  => /api/specialities/all // Metodo GET
+
+  => /api/specialities/one/:name // Metodo GET con el nombre de una especialidad como parametro.
+
+  => /api/specialities/create // Metodo POST
+    Recibe por BODY = {
+      name : string,
+      description : string
+    }
+
+  => /api/specialities/delete/:name Metodo DELETE con el nombre de una especialidad como parametro
+
+
+Rutas para el manejo de usuarios : 
+  => /api/users/all // Metodo GET
+
+  => /api/users/me // Metodo GET. Ruta privada que obtiene los datos de un usuario a travez del token que viene en la request.
+
+  => /api/users/one/:id // Metodo GET que recibe como parametro un id de usuario.
+
+  => /api/users/update // Metodo PUT. Ruta privada que obtiene los datos de un usuario a travez del token que viene en la request y que ademas recibe por BODY datos opcionales como =  {
+      email : string,
+      password : string,
+      firstName : string,
+      lastName : string,
+      role : "ADMIN" | "SUPERADMIN" | "DOCTOR" | "PATIENT",
+      country : string,
+      state : string,
+      city : string,
+      address : string,
+      zipCode : string,
+      phone : string,
+      birthDate : string
+    }
+
+  => /api/users/verify // Metodo GET que recibe por Query token = UUID generado para verificar el mail y id = El id del usuario a verificar.
+
+  => /api/users/speciality // Metodo PATCH que recibe por Query sp= nombre de la especialidad a agregar al usuario y id = id del usuario.
+
+  
+
+
+
+  
+
+
