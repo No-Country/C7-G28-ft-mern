@@ -4,7 +4,7 @@ import { PrismaModule } from './prisma/prisma.module'
 import { UserModule } from './user/user.module'
 import { AuthModule } from './auth/auth.module'
 import { NodemailerModule } from './nodemailer/nodemailer.module'
-import { SpecialityModule } from './speciality/speciality.module';
+import { SpecialityModule } from './speciality/speciality.module'
 
 @Module({
     imports: [

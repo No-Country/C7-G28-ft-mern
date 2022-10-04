@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common'
 import { Role } from 'src/auth/dto'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../prisma/prisma.service'
 import { EditUserDto } from './dto'
 
 @Injectable()
