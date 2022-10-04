@@ -56,6 +56,7 @@ export class UserService {
         return { message: 'User verified' }
     }
 
+    // Vincular una especilidad con un usuario
     async addSpeciality(speciality: string, userId: number) {
         // const user = await this.prisma.user.findUnique({
         //     where: { id: userId }
