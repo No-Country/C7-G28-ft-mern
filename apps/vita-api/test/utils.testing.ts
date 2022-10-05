@@ -20,7 +20,7 @@ const api = {
 }
 
 const signUpUser = {
-    email: 'jorgito@gmail.com',
+    email: 'jorgito123456783423@gmail.com',
     password: 'password',
     firstName: 'Jorge',
     lastName: 'Perez',

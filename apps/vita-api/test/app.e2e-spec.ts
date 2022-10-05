@@ -5,6 +5,8 @@ import { AppModule } from '../src/app.module'
 import * as pactum from 'pactum'
 import { api, signUpUser } from './utils.testing'
 import { AuthDtoSignUp } from 'src/auth/dto'
+import { EditUserDto } from 'src/user/dto'
+import { SpecialityDto } from 'src/speciality/dto'
 
 describe('End to End Testing', () => {
     let app: INestApplication
@@ -44,7 +46,8 @@ describe('End to End Testing', () => {
                     .post(api.auth.signup)
                     .withBody(dto)
                     .expectStatus(201)
-                    .inspect()
+
+                    .stores('id', 'id')
             })
             describe("Shouldn't create a new user if", () => {
                 it('email is not provided', () => {
@@ -168,7 +171,7 @@ describe('End to End Testing', () => {
                     .post(api.auth.signin)
                     .withBody({ email: dto.email, password: dto.password })
                     .expectStatus(201)
-                    .inspect()
+
                     .stores('token', 'token')
             })
 
@@ -178,7 +181,6 @@ describe('End to End Testing', () => {
                     .post(api.auth.signin)
                     .withBody({ email: '', password: dto.password })
                     .expectStatus(400)
-                    .inspect()
             })
             it('Should throw if password is empty', () => {
                 return pactum
@@ -186,7 +188,6 @@ describe('End to End Testing', () => {
                     .post(api.auth.signin)
                     .withBody({ email: dto.email, password: '' })
                     .expectStatus(400)
-                    .inspect()
             })
         })
     })
@@ -200,16 +201,78 @@ describe('End to End Testing', () => {
                         Authorization: 'Bearer $S{token}'
                     })
                     .expectStatus(200)
-                    .inspect()
             })
         })
 
-        describe('Update User', () => {})
+        describe('Update User', () => {
+            it('Should edit current user', () => {
+                const dto: EditUserDto = {
+                    firstName: 'John',
+                    lastName: 'Doe',
+                    city: 'New York',
+                    state: 'NY',
+                    country: 'USA',
+                    zipCode: '10001',
+                    phone: '1234567890'
+                }
+                return pactum
+                    .spec()
+                    .put(api.user.update)
+                    .withHeaders({
+                        Authorization: 'Bearer $S{token}'
+                    })
+                    .withBody(dto)
+                    .expectStatus(200)
+                    .expectBodyContains(dto.lastName)
+                    .expectBodyContains(dto.lastName)
+            })
+        })
     })
+
     describe('Speciality', () => {
-        describe('Create Speciality', () => {})
-        describe('Get Speciality', () => {})
-        describe('Update Speciality', () => {})
-        describe('Delete Speciality', () => {})
+        describe('Create Speciality', () => {
+            it('Should create a new speciality', () => {
+                const dto: SpecialityDto = {
+                    name: 'Dentist',
+                    description: 'Dentist description'
+                }
+                return pactum
+                    .spec()
+                    .post(api.speciality.create)
+                    .withBody(dto)
+                    .expectStatus(201)
+            })
+        })
+        describe('Get Speciality', () => {
+            it('Should get all specialities', () => {
+                return pactum
+                    .spec()
+                    .get(api.speciality.getAll)
+                    .expectStatus(200)
+            })
+        })
+        describe('Update Speciality', () => {
+            it('Should update a speciality', () => {
+                const dto: SpecialityDto = {
+                    name: 'Dentist',
+                    description: 'Dentist Description but better'
+                }
+                return pactum
+                    .spec()
+                    .post(api.speciality.create)
+                    .withBody(dto)
+                    .expectStatus(201)
+                    .expectBodyContains(dto.description)
+            })
+        })
+
+        describe('Delete Speciality', () => {
+            it('Should delete a speciality', () => {
+                return pactum
+                    .spec()
+                    .delete(`${api.speciality.delete}/Dentist`)
+                    .expectStatus(200)
+            })
+        })
     })
 })
