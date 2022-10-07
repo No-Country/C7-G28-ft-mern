@@ -28,8 +28,11 @@ export class AppointmentController {
 
     @Get()
     @UseGuards(JwtGuard)
-    findAll(@Query('doctorId') doctorId: string) {
-        return this.appointmentService.findAllAppointments(+doctorId)
+    findAll(
+        @Query('doctorId') doctorId: string,
+        @Query('userId') userId: string
+    ) {
+        return this.appointmentService.findAllAppointments(+doctorId, +userId)
     }
 
     @Patch(':id')

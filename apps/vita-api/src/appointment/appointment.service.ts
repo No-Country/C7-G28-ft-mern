@@ -12,35 +12,35 @@ import { UpdateAppointmentDto } from './dto/update-appointment.dto'
 export class AppointmentService {
     constructor(private readonly prisma: PrismaService) {}
 
-    async findAllAppointments(doctorId: number) {
+    async findAllAppointments(doctorId: number, userId: number) {
         try {
             let appointments = null
 
-            if (doctorId > 0) {
+            if (doctorId > 0 && userId > 0) {
+                appointments = await this.prisma.appointment.findMany({
+                    where: { doctorId, userId, status: Status.ACTIVE },
+                    select: this.selectQueryParameters()
+                })
+            }
+
+            if (doctorId > 0 && !appointments) {
                 appointments = await this.prisma.appointment.findMany({
                     where: { doctorId, status: Status.ACTIVE },
-                    select: {
-                        id: true,
-                        date: true,
-                        time: true,
-                        statusAppointment: true,
-                        doctorId: true,
-                        userId: true,
-                        status: false
-                    }
+                    select: this.selectQueryParameters()
                 })
-            } else {
+            }
+
+            if (userId > 0 && !appointments) {
+                appointments = await this.prisma.appointment.findMany({
+                    where: { userId, status: Status.ACTIVE },
+                    select: this.selectQueryParameters()
+                })
+            }
+
+            if (!appointments) {
                 appointments = await this.prisma.appointment.findMany({
                     where: { status: Status.ACTIVE },
-                    select: {
-                        id: true,
-                        date: true,
-                        time: true,
-                        statusAppointment: true,
-                        doctorId: true,
-                        userId: true,
-                        status: false
-                    }
+                    select: this.selectQueryParameters()
                 })
             }
 
@@ -53,14 +53,7 @@ export class AppointmentService {
     async findOneAppointment(id: number) {
         const appointment = await this.prisma.appointment.findFirst({
             where: { id, status: Status.ACTIVE },
-            select: {
-                id: true,
-                date: true,
-                time: true,
-                statusAppointment: true,
-                doctorId: true,
-                status: false
-            }
+            select: this.selectQueryParameters()
         })
 
         if (!appointment) throw new BadRequestException('Appointment not found')
@@ -100,15 +93,7 @@ export class AppointmentService {
                     statusAppointment: 'PENDING',
                     status: 'ACTIVE'
                 },
-                select: {
-                    id: true,
-                    date: true,
-                    time: true,
-                    statusAppointment: true,
-                    doctorId: true,
-                    userId: true,
-                    status: false
-                }
+                select: this.selectQueryParameters()
             })
 
             return appointment
@@ -125,6 +110,18 @@ export class AppointmentService {
             })
         } catch (error) {
             this.handleExceptions(error)
+        }
+    }
+
+    private selectQueryParameters = () => {
+        return {
+            id: true,
+            date: true,
+            time: true,
+            statusAppointment: true,
+            doctorId: true,
+            userId: true,
+            status: false
         }
     }
 
