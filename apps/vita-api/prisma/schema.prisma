@@ -37,9 +37,43 @@ model Appointment {
   time              String
   statusAppointment StatusAppointment @default(PENDING)
 
-  status Status @default(ACTIVE)
+  status      Status      @default(ACTIVE)
+  Diagnostics Diagnostic?
 
   @@map("appointments")
+}
+
+model Diagnostic {
+  id               Int               @id @default(autoincrement())
+  appointment      Appointment       @relation(fields: [appointmentId], references: [id])
+  appointmentId    Int               @unique
+  name             String
+  description      String
+  status           Status            @default(ACTIVE)
+  diagnosticInImgs DiagnosticInImg[]
+
+  @@map("diagnostics")
+}
+
+model Img {
+  id            Int    @id @default(autoincrement())
+  descriptionId String
+  status        Status @default(ACTIVE)
+
+  diagnosticInImgs DiagnosticInImg[]
+
+  @@map("imgs")
+}
+
+model DiagnosticInImg {
+  id           Int        @id @default(autoincrement())
+  diagnosticId Int        @unique
+  imgId        Int        @unique
+  status       Status     @default(ACTIVE)
+  Img          Img        @relation(fields: [imgId], references: [id])
+  Diagnostics  Diagnostic @relation(fields: [diagnosticId], references: [id])
+
+  @@map("diagnostic_in_imgs")
 }
 
 enum Role {
