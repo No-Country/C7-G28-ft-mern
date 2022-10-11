@@ -33,7 +33,16 @@ export class DiagnosticService {
     }
 
     findAllDiagnostics() {
-        return `This action returns all diagnostic`
+        try {
+            const diagnostics = this.prisma.diagnostic.findMany({
+                where: { status: Status.ACTIVE },
+                select: this.selectQueryParameters()
+            })
+
+            return diagnostics
+        } catch (error) {
+            this.handleExceptions(error)
+        }
     }
 
     async findOneDiagnostic(id: number) {
