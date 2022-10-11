@@ -53,6 +53,7 @@ enum StatusAppointment {
   PENDING
   APPROVED
   CANCELED
+  COMPLETED
 }
 
 enum Status {
