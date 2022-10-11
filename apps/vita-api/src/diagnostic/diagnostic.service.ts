@@ -51,8 +51,15 @@ export class DiagnosticService {
         return `This action updates a #${id} diagnostic`
     }
 
-    deleteDiagnostic(id: number) {
-        return `This action removes a #${id} diagnostic`
+    async deleteDiagnostic(id: number) {
+        try {
+            await this.prisma.diagnostic.updateMany({
+                where: { id, status: Status.ACTIVE },
+                data: { status: 'INACTIVE' }
+            })
+        } catch (error) {
+            this.handleExceptions(error)
+        }
     }
 
     private selectQueryParameters = () => {
