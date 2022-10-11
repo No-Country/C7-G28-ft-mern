@@ -3,6 +3,7 @@ import {
     Injectable,
     InternalServerErrorException
 } from '@nestjs/common'
+import { Status } from '@prisma/client'
 import { PrismaService } from '../prisma/prisma.service'
 import { CreateDiagnosticDto } from './dto/create-diagnostic.dto'
 import { UpdateDiagnosticDto } from './dto/update-diagnostic.dto'
@@ -11,11 +12,11 @@ import { UpdateDiagnosticDto } from './dto/update-diagnostic.dto'
 export class DiagnosticService {
     constructor(private readonly prisma: PrismaService) {}
 
-    create(data: CreateDiagnosticDto) {
+    async create(data: CreateDiagnosticDto) {
         try {
             const { name, appointmentId, description } = data
 
-            const diagnostic = this.prisma.diagnostic.create({
+            const diagnostic = await this.prisma.diagnostic.create({
                 data: {
                     name,
                     appointmentId,
@@ -31,19 +32,26 @@ export class DiagnosticService {
         }
     }
 
-    findAll() {
+    findAllDiagnostics() {
         return `This action returns all diagnostic`
     }
 
-    findOne(id: number) {
-        return `This action returns a #${id} diagnostic`
+    async findOneDiagnostic(id: number) {
+        const diagnostic = await this.prisma.diagnostic.findFirst({
+            where: { id, status: Status.ACTIVE },
+            select: this.selectQueryParameters()
+        })
+
+        if (!diagnostic) throw new BadRequestException('Diagnostic not found')
+
+        return diagnostic
     }
 
-    update(id: number, updateDiagnosticDto: UpdateDiagnosticDto) {
+    updateDiagnostic(id: number, updateDiagnosticDto: UpdateDiagnosticDto) {
         return `This action updates a #${id} diagnostic`
     }
 
-    remove(id: number) {
+    deleteDiagnostic(id: number) {
         return `This action removes a #${id} diagnostic`
     }
 

@@ -22,12 +22,12 @@ export class DiagnosticController {
 
     @Get()
     findAll() {
-        return this.diagnosticService.findAll()
+        return this.diagnosticService.findAllDiagnostics()
     }
 
     @Get(':id')
     findOne(@Param('id') id: string) {
-        return this.diagnosticService.findOne(+id)
+        return this.diagnosticService.findOneDiagnostic(+id)
     }
 
     @Patch(':id')
@@ -35,11 +35,11 @@ export class DiagnosticController {
         @Param('id') id: string,
         @Body() updateDiagnosticDto: UpdateDiagnosticDto
     ) {
-        return this.diagnosticService.update(+id, updateDiagnosticDto)
+        return this.diagnosticService.updateDiagnostic(+id, updateDiagnosticDto)
     }
 
     @Delete(':id')
     remove(@Param('id') id: string) {
-        return this.diagnosticService.remove(+id)
+        return this.diagnosticService.deleteDiagnostic(+id)
     }
 }
