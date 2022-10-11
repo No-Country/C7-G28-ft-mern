@@ -47,8 +47,26 @@ export class DiagnosticService {
         return diagnostic
     }
 
-    updateDiagnostic(id: number, updateDiagnosticDto: UpdateDiagnosticDto) {
-        return `This action updates a #${id} diagnostic`
+    async updateDiagnostic(id: number, data: UpdateDiagnosticDto) {
+        try {
+            const { name, description, appointmentId } = data
+
+            const diagnostic = await this.prisma.diagnostic.updateMany({
+                where: { id, status: Status.ACTIVE },
+                data: {
+                    name,
+                    description,
+                    appointmentId
+                }
+            })
+
+            if (!diagnostic.count || diagnostic.count === 0)
+                throw new BadRequestException('Diagnostic not found')
+
+            return { ...data, id }
+        } catch (error) {
+            this.handleExceptions(error)
+        }
     }
 
     async deleteDiagnostic(id: number) {
@@ -75,6 +93,8 @@ export class DiagnosticService {
     private handleExceptions(error: any): never {
         if (error.code === 'P2025')
             throw new BadRequestException(error.meta.cause)
+
+        if (error.code === 'P2003') throw new BadRequestException(error.meta)
 
         console.log(error)
         throw new InternalServerErrorException(`Please check logs`)

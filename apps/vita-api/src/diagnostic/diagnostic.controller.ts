@@ -31,11 +31,8 @@ export class DiagnosticController {
     }
 
     @Patch(':id')
-    update(
-        @Param('id') id: string,
-        @Body() updateDiagnosticDto: UpdateDiagnosticDto
-    ) {
-        return this.diagnosticService.updateDiagnostic(+id, updateDiagnosticDto)
+    update(@Param('id') id: string, @Body() data: UpdateDiagnosticDto) {
+        return this.diagnosticService.updateDiagnostic(+id, data)
     }
 
     @Delete(':id')
