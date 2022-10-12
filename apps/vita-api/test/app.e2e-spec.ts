@@ -223,7 +223,7 @@ describe('End to End Testing', () => {
                     })
                     .withBody(dto)
                     .expectStatus(200)
-                    .expectBodyContains(dto.lastName)
+                    .expectBodyContains(dto.firstName)
                     .expectBodyContains(dto.lastName)
             })
         })
