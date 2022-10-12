@@ -22,6 +22,16 @@ export class UserController {
         return this.UserService.getAllUsers()
     }
 
+    @Get('all/doctors')
+    getAllDoctors() {
+        return this.UserService.getAllDoctors()
+    }
+
+    @Get('all/patients')
+    getAllPatients() {
+        return this.UserService.getAllPatients()
+    }
+
     @UseGuards(JwtGuard)
     @Get('me')
     getMe(@GetUser() user: User) {

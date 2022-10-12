@@ -59,4 +59,20 @@ export class SpecialityService {
             throw new ForbiddenException(error)
         }
     }
+
+    async updateSpeciality(name: string, speciality: SpecialityDto) {
+        try {
+            const updatedSpeciality = await this.prisma.speciality.update({
+                where: {
+                    name
+                },
+                data: {
+                    ...speciality
+                }
+            })
+            return { speciality: updatedSpeciality }
+        } catch (error) {
+            throw new ForbiddenException(error)
+        }
+    }
 }

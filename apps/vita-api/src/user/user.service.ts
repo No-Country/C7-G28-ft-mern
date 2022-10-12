@@ -86,4 +86,34 @@ export class UserService {
             throw new ForbiddenException(error)
         }
     }
+
+    async getAllDoctors() {
+        try {
+            return this.prisma.user.findMany({
+                where: {
+                    role: Role.DOCTOR
+                },
+                include: {
+                    speciality: true
+                }
+            })
+        } catch (error) {
+            throw new ForbiddenException(error)
+        }
+    }
+
+    async getAllPatients() {
+        try {
+            return this.prisma.user.findMany({
+                where: {
+                    role: Role.PATIENT
+                },
+                include: {
+                    speciality: true
+                }
+            })
+        } catch (error) {
+            throw new ForbiddenException(error)
+        }
+    }
 }
