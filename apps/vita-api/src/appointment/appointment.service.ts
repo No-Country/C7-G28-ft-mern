@@ -55,11 +55,29 @@ export class AppointmentService {
         }
     }
 
-    async findOneAppointment(id: number) {
-        const appointment = await this.prisma.appointment.findFirst({
-            where: { id, status: Status.ACTIVE },
-            select: this.selectQueryParameters()
-        })
+    async findOneAppointment(id: number, user: User) {
+        let appointment = null
+
+        if (user.role === 'PATIENT') {
+            appointment = await this.prisma.appointment.findFirst({
+                where: { id, userId: user.id, status: Status.ACTIVE },
+                select: this.selectQueryParameters()
+            })
+        }
+
+        if (user.role === 'DOCTOR') {
+            appointment = await this.prisma.appointment.findFirst({
+                where: { id, doctorId: user.id, status: Status.ACTIVE },
+                select: this.selectQueryParameters()
+            })
+        }
+
+        if (user.role === 'ADMIN') {
+            appointment = await this.prisma.appointment.findFirst({
+                where: { id, status: Status.ACTIVE },
+                select: this.selectQueryParameters()
+            })
+        }
 
         if (!appointment) throw new BadRequestException('Appointment not found')
 

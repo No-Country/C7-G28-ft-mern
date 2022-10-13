@@ -25,8 +25,8 @@ export class AppointmentController {
     @Get(':id')
     @UseGuards(JwtGuard, RolesGuard)
     @Roles('DOCTOR', 'PATIENT', 'ADMIN')
-    findOne(@Param('id') id: string) {
-        return this.appointmentService.findOneAppointment(+id)
+    findOne(@Param('id') id: string, @GetUser() user: User) {
+        return this.appointmentService.findOneAppointment(+id, user)
     }
 
     @Get()
