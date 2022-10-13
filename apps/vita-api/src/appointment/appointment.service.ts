@@ -144,12 +144,21 @@ export class AppointmentService {
         }
     }
 
-    async deleteAppointment(id: number) {
+    async deleteAppointment(id: number, user: User) {
         try {
-            await this.prisma.appointment.updateMany({
-                where: { id, status: Status.ACTIVE },
-                data: { status: 'INACTIVE' }
-            })
+            if (user.role === 'DOCTOR') {
+                await this.prisma.appointment.updateMany({
+                    where: { id, doctorId: user.id, status: Status.ACTIVE },
+                    data: { status: Status.INACTIVE }
+                })
+            }
+
+            if (user.role === 'ADMIN') {
+                await this.prisma.appointment.updateMany({
+                    where: { id, status: Status.ACTIVE },
+                    data: { status: Status.INACTIVE }
+                })
+            }
         } catch (error) {
             this.handleExceptions(error)
         }
