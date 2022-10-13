@@ -31,7 +31,7 @@ export class AppointmentController {
 
     @Get()
     @UseGuards(JwtGuard, RolesGuard)
-    @Roles('DOCTOR', 'PATIENT')
+    @Roles('DOCTOR', 'PATIENT', 'ADMIN')
     findAll(
         @Query('doctorId') doctorId: string,
         @Query('userId') userId: string
@@ -41,7 +41,7 @@ export class AppointmentController {
 
     @Patch(':id')
     @UseGuards(JwtGuard, RolesGuard)
-    @Roles('DOCTOR')
+    @Roles('DOCTOR', 'ADMIN')
     update(@Param('id') id: string, @Body() data: UpdateAppointmentDto) {
         return this.appointmentService.updateAppointment(+id, data)
     }
@@ -55,7 +55,7 @@ export class AppointmentController {
 
     @Delete(':id')
     @UseGuards(JwtGuard, RolesGuard)
-    @Roles('ADMIN')
+    @Roles('DOCTOR', 'ADMIN')
     delete(@Param('id') id: string) {
         return this.appointmentService.deleteAppointment(+id)
     }
