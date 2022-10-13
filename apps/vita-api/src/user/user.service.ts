@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common'
 import { Role } from 'src/auth/dto'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from '../prisma/prisma.service'
 import { EditUserDto } from './dto'
 
 @Injectable()
@@ -8,16 +8,24 @@ export class UserService {
     constructor(private prisma: PrismaService) {}
 
     async getAllUsers() {
-        return this.prisma.user.findMany()
+        return this.prisma.user.findMany({
+            include: {
+                speciality: true
+            }
+        })
     }
 
     async getUserById(id: number) {
-        const user = this.prisma.user.findUnique({ where: { id } })
+        const user = await this.prisma.user.findUnique({
+            where: { id },
+            include: { speciality: true }
+        })
 
         if (!user) {
             throw new ForbiddenException('User not found')
         }
 
+        delete user.hash
         return user
     }
 
@@ -46,5 +54,66 @@ export class UserService {
             data: { verified: true, vertificationCode: null }
         })
         return { message: 'User verified' }
+    }
+
+    // Vincular una especilidad con un usuario
+    async addSpeciality(speciality: string, userId: number) {
+        // const user = await this.prisma.user.findUnique({
+        //     where: { id: userId }
+        // })
+        // if (!user) throw new ForbiddenException('User not found')
+
+        // const spec = await this.prisma.speciality.findUnique({
+        //     where: { name: speciality }
+        // })
+        // if (!spec) throw new ForbiddenException('Speciality not found')
+        try {
+            const newUser = await this.prisma.user.update({
+                where: { id: userId },
+                data: {
+                    speciality: {
+                        connect: {
+                            name: speciality
+                        }
+                    }
+                },
+                include: {
+                    speciality: true
+                }
+            })
+            return newUser
+        } catch (error) {
+            throw new ForbiddenException(error)
+        }
+    }
+
+    async getAllDoctors() {
+        try {
+            return this.prisma.user.findMany({
+                where: {
+                    role: Role.DOCTOR
+                },
+                include: {
+                    speciality: true
+                }
+            })
+        } catch (error) {
+            throw new ForbiddenException(error)
+        }
+    }
+
+    async getAllPatients() {
+        try {
+            return this.prisma.user.findMany({
+                where: {
+                    role: Role.PATIENT
+                },
+                include: {
+                    speciality: true
+                }
+            })
+        } catch (error) {
+            throw new ForbiddenException(error)
+        }
     }
 }

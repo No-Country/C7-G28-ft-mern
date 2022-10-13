@@ -64,6 +64,17 @@ const cities = [
     'Salta'
 ]
 
+const specialities = []
+
+const createSpecialities = num => {
+    for (let i = 0; i < num; i++) {
+        specialities.push({
+            name: `Speciality ${i + 1}`,
+            description: `Description ${i + 1}`
+        })
+    }
+}
+
 const createUsers = async (num: number) => {
     for (let i = 0; i < num; i++) {
         const hash = await argon.hash('password')
@@ -91,15 +102,21 @@ const createUsers = async (num: number) => {
     }
 }
 
-const main = async users => {
+const main = async (users, specialities) => {
     for (const user of users) {
         await prisma.user.create({
             data: user
         })
     }
+    createSpecialities(20)
+    for (const speciality of specialities) {
+        await prisma.speciality.create({
+            data: speciality
+        })
+    }
 }
 createUsers(100).then(() => {
-    main(users)
+    main(users, specialities)
         .catch(e => {
             throw e
         })

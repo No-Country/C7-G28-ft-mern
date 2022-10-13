@@ -29,6 +29,8 @@ model User {
   verified Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  specialityId Int?
+  speciality Speciality? @relation(fields: [specialityId], references: [id])
 
   @@map("users")
 }
@@ -40,14 +42,12 @@ enum Role {
   PATIENT
 }
 
-// model Contact {
-//   id        Int      @id @default(autoincrement())
-//   country   String
-//   state     String
-//   city      String
-//   zipCode     String
-//   address   String
-//   phone     String
-//   userId    Int @unique
-//   user      User     @relation(fields: [userId], references: [id])
-// }
+model Speciality {
+  id        Int      @id @default(autoincrement())
+  name      String @unique
+  description String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  users     User[]
+}
+

@@ -1,7 +1,7 @@
 /* eslint-disable indent */
 
 import { IsEmail, IsEnum, IsOptional, IsString } from 'class-validator'
-import { Role } from 'src/auth/dto'
+import { Role } from '../../auth/dto'
 
 export class EditUserDto {
     @IsEmail()
