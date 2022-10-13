@@ -42,8 +42,12 @@ export class AppointmentController {
     @Patch(':id')
     @UseGuards(JwtGuard, RolesGuard)
     @Roles('DOCTOR', 'ADMIN')
-    update(@Param('id') id: string, @Body() data: UpdateAppointmentDto) {
-        return this.appointmentService.updateAppointment(+id, data)
+    update(
+        @Param('id') id: string,
+        @Body() data: UpdateAppointmentDto,
+        @GetUser() user: User
+    ) {
+        return this.appointmentService.updateAppointment(+id, data, user)
     }
 
     @Post()

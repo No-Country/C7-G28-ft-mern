@@ -84,20 +84,50 @@ export class AppointmentService {
         return appointment
     }
 
-    async updateAppointment(id: number, data: UpdateAppointmentDto) {
+    async updateAppointment(
+        id: number,
+        data: UpdateAppointmentDto,
+        user: User
+    ) {
         try {
             const { date, time, statusAppointment = 'PENDING' } = data
 
-            const appointment = await this.prisma.appointment.updateMany({
-                where: { id, status: Status.ACTIVE },
-                data: {
-                    date,
-                    time,
-                    statusAppointment: StatusAppointment[statusAppointment]
-                }
+            let appointment = null
+
+            const appointmentDB = await this.prisma.appointment.findFirst({
+                where: { date, doctorId: user.id, time, status: Status.ACTIVE },
+                select: this.selectQueryParameters()
             })
 
-            return appointment
+            if (appointmentDB)
+                throw new BadRequestException('Appointment already exists')
+
+            if (user.role === 'DOCTOR') {
+                appointment = await this.prisma.appointment.updateMany({
+                    where: { id, doctorId: user.id, status: Status.ACTIVE },
+                    data: {
+                        date,
+                        time,
+                        statusAppointment: StatusAppointment[statusAppointment]
+                    }
+                })
+            }
+
+            if (user.role === 'ADMIN') {
+                appointment = await this.prisma.appointment.updateMany({
+                    where: { id, status: Status.ACTIVE },
+                    data: {
+                        date,
+                        time,
+                        statusAppointment: StatusAppointment[statusAppointment]
+                    }
+                })
+            }
+
+            if (!appointment || appointment.count === 0)
+                throw new BadRequestException('Appointment not found')
+
+            return { ...data, ...appointment }
         } catch (error) {
             this.handleExceptions(error)
         }
