@@ -34,9 +34,14 @@ export class AppointmentController {
     @Roles(Role.DOCTOR, Role.PATIENT, Role.ADMIN)
     findAll(
         @Query('doctorId') doctorId: string,
-        @Query('userId') userId: string
+        @Query('userId') userId: string,
+        @GetUser() user: User
     ) {
-        return this.appointmentService.findAllAppointments(+doctorId, +userId)
+        return this.appointmentService.findAllAppointments(
+            +doctorId,
+            +userId,
+            user
+        )
     }
 
     @Patch(':id')

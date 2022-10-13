@@ -12,39 +12,35 @@ import { UpdateAppointmentDto } from './dto/update-appointment.dto'
 export class AppointmentService {
     constructor(private readonly prisma: PrismaService) {}
 
-    async findAllAppointments(doctorId: number, userId: number) {
+    async findAllAppointments(doctorId: number, userId: number, user: User) {
         if (doctorId === userId)
             throw new BadRequestException(
-                'doctor id and user id cannot be the same'
+                `doctor id ${doctorId} and user id ${userId} cannot be the same`
             )
 
         try {
             let appointments = null
 
-            if (doctorId > 0 && userId > 0) {
+            if (
+                (doctorId > 0 && user.role === Role.ADMIN) ||
+                (userId > 0 && user.role === Role.ADMIN)
+            ) {
                 appointments = await this.prisma.appointment.findMany({
                     where: { doctorId, userId, status: Status.ACTIVE },
                     select: this.selectQueryParameters()
                 })
             }
 
-            if (doctorId > 0 && !appointments) {
+            if (doctorId > 0 && !appointments && user.role === Role.PATIENT) {
                 appointments = await this.prisma.appointment.findMany({
-                    where: { doctorId, status: Status.ACTIVE },
+                    where: { doctorId, userId: user.id, status: Status.ACTIVE },
                     select: this.selectQueryParameters()
                 })
             }
 
-            if (userId > 0 && !appointments) {
+            if (userId > 0 && !appointments && user.role === Role.DOCTOR) {
                 appointments = await this.prisma.appointment.findMany({
-                    where: { userId, status: Status.ACTIVE },
-                    select: this.selectQueryParameters()
-                })
-            }
-
-            if (!appointments) {
-                appointments = await this.prisma.appointment.findMany({
-                    where: { status: Status.ACTIVE },
+                    where: { userId, doctorId: user.id, status: Status.ACTIVE },
                     select: this.selectQueryParameters()
                 })
             }
