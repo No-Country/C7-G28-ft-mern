@@ -13,6 +13,11 @@ export class AppointmentService {
     constructor(private readonly prisma: PrismaService) {}
 
     async findAllAppointments(doctorId: number, userId: number) {
+        if (doctorId === userId)
+            throw new BadRequestException(
+                'doctor id and user id cannot be the same'
+            )
+
         try {
             let appointments = null
 
