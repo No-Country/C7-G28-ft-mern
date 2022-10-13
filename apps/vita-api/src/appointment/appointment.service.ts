@@ -104,9 +104,28 @@ export class AppointmentService {
     }
 
     async createAppointment(data: CreateAppointmentDto, user: User) {
-        try {
-            const { date, doctorId, time } = data
+        const { date, doctorId, time } = data
 
+        if (doctorId === user.id)
+            throw new BadRequestException(
+                `doctor id ${doctorId} and user id ${user.id} cannot be the same`
+            )
+
+        const doctorDB = await this.prisma.user.findFirst({
+            where: { id: doctorId, role: 'DOCTOR' }
+        })
+
+        if (!doctorDB) throw new BadRequestException('Doctor not found')
+
+        const appointmentDB = await this.prisma.appointment.findFirst({
+            where: { date, doctorId, time, status: Status.ACTIVE },
+            select: this.selectQueryParameters()
+        })
+
+        if (appointmentDB)
+            throw new BadRequestException('Appointment already exists')
+
+        try {
             const appointment = await this.prisma.appointment.create({
                 data: {
                     date,
