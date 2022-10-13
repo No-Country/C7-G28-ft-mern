@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
     IsEnum,
     IsNotEmpty,
@@ -18,22 +19,27 @@ enum StatusAppointment {
     CANCELED = 'CANCELED'
 }
 export class CreateAppointmentDto {
+    @ApiProperty({ required: true, type: Number })
     @IsNumber()
     @IsPositive()
     doctorId: number
 
+    @ApiProperty({ required: true, type: String })
     @IsNotEmpty()
     @IsString()
     date: string
 
+    @ApiProperty({ required: true, type: String })
     @IsNotEmpty()
     @IsString()
     time: string
 
+    @ApiProperty({ required: false, type: String })
     @IsEnum(StatusAppointment)
     @IsOptional()
     statusAppointment?: string
 
+    @ApiProperty({ required: false, type: String })
     @IsEnum(Status)
     @IsOptional()
     status?: string
