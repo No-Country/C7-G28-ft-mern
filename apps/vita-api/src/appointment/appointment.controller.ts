@@ -24,14 +24,14 @@ export class AppointmentController {
 
     @Get(':id')
     @UseGuards(JwtGuard, RolesGuard)
-    @Roles('DOCTOR', 'PATIENT', 'ADMIN')
+    @Roles(Role.DOCTOR, Role.PATIENT, Role.ADMIN)
     findOne(@Param('id') id: string, @GetUser() user: User) {
         return this.appointmentService.findOneAppointment(+id, user)
     }
 
     @Get()
     @UseGuards(JwtGuard, RolesGuard)
-    @Roles('DOCTOR', 'PATIENT', 'ADMIN')
+    @Roles(Role.DOCTOR, Role.PATIENT, Role.ADMIN)
     findAll(
         @Query('doctorId') doctorId: string,
         @Query('userId') userId: string
@@ -41,7 +41,7 @@ export class AppointmentController {
 
     @Patch(':id')
     @UseGuards(JwtGuard, RolesGuard)
-    @Roles('DOCTOR', 'ADMIN')
+    @Roles(Role.DOCTOR, Role.ADMIN)
     update(
         @Param('id') id: string,
         @Body() data: UpdateAppointmentDto,
@@ -52,14 +52,14 @@ export class AppointmentController {
 
     @Post()
     @UseGuards(JwtGuard, RolesGuard)
-    @Roles('DOCTOR', 'PATIENT', 'ADMIN')
+    @Roles(Role.DOCTOR, Role.PATIENT, Role.ADMIN)
     create(@Body() data: CreateAppointmentDto, @GetUser() user: User) {
         return this.appointmentService.createAppointment(data, user)
     }
 
     @Delete(':id')
     @UseGuards(JwtGuard, RolesGuard)
-    @Roles('DOCTOR', 'ADMIN')
+    @Roles(Role.DOCTOR, Role.ADMIN)
     delete(@Param('id') id: string, @GetUser() user: User) {
         return this.appointmentService.deleteAppointment(+id, user)
     }

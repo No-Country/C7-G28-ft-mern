@@ -3,7 +3,7 @@ import {
     Injectable,
     InternalServerErrorException
 } from '@nestjs/common'
-import { StatusAppointment, User, Status } from '@prisma/client'
+import { StatusAppointment, User, Status, Role } from '@prisma/client'
 import { PrismaService } from '../prisma/prisma.service'
 import { CreateAppointmentDto } from './dto/create-appointment.dto'
 import { UpdateAppointmentDto } from './dto/update-appointment.dto'
@@ -58,21 +58,21 @@ export class AppointmentService {
     async findOneAppointment(id: number, user: User) {
         let appointment = null
 
-        if (user.role === 'PATIENT') {
+        if (user.role === Role.PATIENT) {
             appointment = await this.prisma.appointment.findFirst({
                 where: { id, userId: user.id, status: Status.ACTIVE },
                 select: this.selectQueryParameters()
             })
         }
 
-        if (user.role === 'DOCTOR') {
+        if (user.role === Role.DOCTOR) {
             appointment = await this.prisma.appointment.findFirst({
                 where: { id, doctorId: user.id, status: Status.ACTIVE },
                 select: this.selectQueryParameters()
             })
         }
 
-        if (user.role === 'ADMIN') {
+        if (user.role === Role.ADMIN) {
             appointment = await this.prisma.appointment.findFirst({
                 where: { id, status: Status.ACTIVE },
                 select: this.selectQueryParameters()
@@ -90,7 +90,11 @@ export class AppointmentService {
         user: User
     ) {
         try {
-            const { date, time, statusAppointment = 'PENDING' } = data
+            const {
+                date,
+                time,
+                statusAppointment = StatusAppointment.PENDING
+            } = data
 
             let appointment = null
 
@@ -102,7 +106,7 @@ export class AppointmentService {
             if (appointmentDB)
                 throw new BadRequestException('Appointment already exists')
 
-            if (user.role === 'DOCTOR') {
+            if (user.role === Role.DOCTOR) {
                 appointment = await this.prisma.appointment.updateMany({
                     where: { id, doctorId: user.id, status: Status.ACTIVE },
                     data: {
@@ -113,7 +117,7 @@ export class AppointmentService {
                 })
             }
 
-            if (user.role === 'ADMIN') {
+            if (user.role === Role.ADMIN) {
                 appointment = await this.prisma.appointment.updateMany({
                     where: { id, status: Status.ACTIVE },
                     data: {
@@ -142,7 +146,7 @@ export class AppointmentService {
             )
 
         const doctorDB = await this.prisma.user.findFirst({
-            where: { id: doctorId, role: 'DOCTOR' }
+            where: { id: doctorId, role: Role.DOCTOR }
         })
 
         if (!doctorDB) throw new BadRequestException('Doctor not found')
@@ -162,8 +166,8 @@ export class AppointmentService {
                     time,
                     doctorId,
                     userId: user.id,
-                    statusAppointment: 'PENDING',
-                    status: 'ACTIVE'
+                    statusAppointment: StatusAppointment.PENDING,
+                    status: Status.ACTIVE
                 },
                 select: this.selectQueryParameters()
             })
@@ -176,14 +180,14 @@ export class AppointmentService {
 
     async deleteAppointment(id: number, user: User) {
         try {
-            if (user.role === 'DOCTOR') {
+            if (user.role === Role.DOCTOR) {
                 await this.prisma.appointment.updateMany({
                     where: { id, doctorId: user.id, status: Status.ACTIVE },
                     data: { status: Status.INACTIVE }
                 })
             }
 
-            if (user.role === 'ADMIN') {
+            if (user.role === Role.ADMIN) {
                 await this.prisma.appointment.updateMany({
                     where: { id, status: Status.ACTIVE },
                     data: { status: Status.INACTIVE }
