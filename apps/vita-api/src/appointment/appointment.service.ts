@@ -176,19 +176,24 @@ export class AppointmentService {
 
     async deleteAppointment(id: number, user: User) {
         try {
+            let appointment = null
+
+            if (user.role === Role.PATIENT) {
+                appointment = await this.prisma.appointment.updateMany({
+                    where: { id, userId: user.id, status: Status.ACTIVE },
+                    data: { status: Status.INACTIVE }
+                })
+            }
+
             if (user.role === Role.DOCTOR) {
-                await this.prisma.appointment.updateMany({
+                appointment = await this.prisma.appointment.updateMany({
                     where: { id, doctorId: user.id, status: Status.ACTIVE },
                     data: { status: Status.INACTIVE }
                 })
             }
 
-            if (user.role === Role.ADMIN) {
-                await this.prisma.appointment.updateMany({
-                    where: { id, status: Status.ACTIVE },
-                    data: { status: Status.INACTIVE }
-                })
-            }
+            if (appointment.count === 0)
+                throw new BadRequestException('Appointment not found')
         } catch (error) {
             this.handleExceptions(error)
         }

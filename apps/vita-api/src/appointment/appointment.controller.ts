@@ -64,7 +64,7 @@ export class AppointmentController {
 
     @Delete(':id')
     @UseGuards(JwtGuard, RolesGuard)
-    @Roles(Role.DOCTOR, Role.ADMIN)
+    @Roles(Role.PATIENT, Role.DOCTOR)
     delete(@Param('id') id: string, @GetUser() user: User) {
         return this.appointmentService.deleteAppointment(+id, user)
     }
