@@ -32,16 +32,8 @@ export class AppointmentController {
     @Get()
     @UseGuards(JwtGuard, RolesGuard)
     @Roles(Role.DOCTOR, Role.PATIENT, Role.ADMIN)
-    findAll(
-        @Query('doctorId') doctorId: string,
-        @Query('userId') userId: string,
-        @GetUser() user: User
-    ) {
-        return this.appointmentService.findAllAppointments(
-            +doctorId,
-            +userId,
-            user
-        )
+    findAll(@GetUser() user: User) {
+        return this.appointmentService.findAllAppointments(user)
     }
 
     @Patch(':id')

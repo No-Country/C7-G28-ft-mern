@@ -12,35 +12,27 @@ import { UpdateAppointmentDto } from './dto/update-appointment.dto'
 export class AppointmentService {
     constructor(private readonly prisma: PrismaService) {}
 
-    async findAllAppointments(doctorId: number, userId: number, user: User) {
-        if (doctorId === userId)
-            throw new BadRequestException(
-                `doctor id ${doctorId} and user id ${userId} cannot be the same`
-            )
-
+    async findAllAppointments(user: User) {
         try {
             let appointments = null
 
-            if (
-                (doctorId > 0 && user.role === Role.ADMIN) ||
-                (userId > 0 && user.role === Role.ADMIN)
-            ) {
+            if (user.role === Role.PATIENT) {
                 appointments = await this.prisma.appointment.findMany({
-                    where: { doctorId, userId, status: Status.ACTIVE },
+                    where: { userId: user.id, status: Status.ACTIVE },
                     select: this.selectQueryParameters()
                 })
             }
 
-            if (doctorId > 0 && !appointments && user.role === Role.PATIENT) {
+            if (user.role === Role.DOCTOR) {
                 appointments = await this.prisma.appointment.findMany({
-                    where: { doctorId, userId: user.id, status: Status.ACTIVE },
+                    where: { doctorId: user.id, status: Status.ACTIVE },
                     select: this.selectQueryParameters()
                 })
             }
 
-            if (userId > 0 && !appointments && user.role === Role.DOCTOR) {
+            if (user.role === Role.ADMIN) {
                 appointments = await this.prisma.appointment.findMany({
-                    where: { userId, doctorId: user.id, status: Status.ACTIVE },
+                    where: { status: Status.ACTIVE },
                     select: this.selectQueryParameters()
                 })
             }
