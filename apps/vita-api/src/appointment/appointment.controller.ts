@@ -46,7 +46,7 @@ export class AppointmentController {
 
     @Patch(':id')
     @UseGuards(JwtGuard, RolesGuard)
-    @Roles(Role.DOCTOR, Role.ADMIN)
+    @Roles(Role.PATIENT, Role.DOCTOR)
     update(
         @Param('id') id: string,
         @Body() data: UpdateAppointmentDto,

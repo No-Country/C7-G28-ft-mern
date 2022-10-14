@@ -102,20 +102,21 @@ export class AppointmentService {
             if (appointmentDB)
                 throw new BadRequestException('Appointment already exists')
 
+            if (user.role === Role.PATIENT) {
+                appointment = await this.prisma.appointment.updateMany({
+                    where: { id, userId: user.id, status: Status.ACTIVE },
+                    data: {
+                        date,
+                        time
+                    }
+                })
+
+                data.statusAppointment = undefined
+            }
+
             if (user.role === Role.DOCTOR) {
                 appointment = await this.prisma.appointment.updateMany({
                     where: { id, doctorId: user.id, status: Status.ACTIVE },
-                    data: {
-                        date,
-                        time,
-                        statusAppointment: StatusAppointment[statusAppointment]
-                    }
-                })
-            }
-
-            if (user.role === Role.ADMIN) {
-                appointment = await this.prisma.appointment.updateMany({
-                    where: { id, status: Status.ACTIVE },
                     data: {
                         date,
                         time,
