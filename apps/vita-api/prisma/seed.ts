@@ -86,7 +86,7 @@ const createUsers = async (num: number) => {
             lastName: `${surnames[i % surnames.length]}`,
             email: `user${i + 1}@gmail.com`,
             hash,
-            role: i > num - 3 ? Role.DOCTOR : Role.PATIENT,
+            role: i > num - 20 ? Role.DOCTOR : Role.PATIENT,
             birthDate: `${day < 10 ? '0' + day : day}/${
                 month < 10 ? '0' + month : month
             }/${year}`,
@@ -103,19 +103,18 @@ const createUsers = async (num: number) => {
 }
 
 const main = async (users, specialities) => {
-    for (const user of users) {
-        await prisma.user.create({
-            data: user
-        })
-    }
+    await prisma.user.createMany({
+        data: users
+    })
+
     createSpecialities(20)
-    for (const speciality of specialities) {
-        await prisma.speciality.create({
-            data: speciality
-        })
-    }
+
+    await prisma.speciality.createMany({
+        data: specialities
+    })
 }
-createUsers(100).then(() => {
+
+createUsers(500).then(() => {
     main(users, specialities)
         .catch(e => {
             throw e
