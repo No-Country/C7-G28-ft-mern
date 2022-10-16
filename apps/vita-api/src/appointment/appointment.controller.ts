@@ -18,7 +18,7 @@ import { UpdateAppointmentDto } from './dto/update-appointment.dto'
 import { RolesGuard } from '../auth/guard/roles.guard'
 import { Roles } from '../auth/decorator/roles.decorator'
 
-@Controller('appointment')
+@Controller('appointments')
 export class AppointmentController {
     constructor(private readonly appointmentService: AppointmentService) {}
 

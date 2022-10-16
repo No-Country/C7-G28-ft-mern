@@ -18,11 +18,11 @@ const api = {
         delete: 'http://localhost:4000/api/specialities/delete'
     },
     appointment: {
-        create: 'http://localhost:4000/api/appointment',
-        getAll: 'http://localhost:4000/api/appointment',
-        getOne: 'http://localhost:4000/api/appointment',
-        delete: 'http://localhost:4000/api/appointment',
-        update: 'http://localhost:4000/api/appointment'
+        create: 'http://localhost:4000/api/appointments',
+        getAll: 'http://localhost:4000/api/appointments',
+        getOne: 'http://localhost:4000/api/appointments',
+        delete: 'http://localhost:4000/api/appointments',
+        update: 'http://localhost:4000/api/appointments'
     }
 }
 
