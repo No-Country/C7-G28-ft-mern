@@ -16,6 +16,15 @@ export class DiagnosticService {
         try {
             const { name, appointmentId, description } = data
 
+            const appointmentDB = await this.prisma.appointment.findFirst({
+                where: { id: appointmentId, status: Status.ACTIVE }
+            })
+
+            if (!appointmentDB)
+                throw new BadRequestException(
+                    `Appointment by id ${appointmentId} not found`
+                )
+
             const diagnostic = await this.prisma.diagnostic.create({
                 data: {
                     name,
