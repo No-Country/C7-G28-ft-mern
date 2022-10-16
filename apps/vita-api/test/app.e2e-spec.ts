@@ -24,8 +24,8 @@ describe('End to End Testing', () => {
         describe('Appointment', () => {
             describe('Create an appointment', () => {
                 const appointmentDto: CreateAppointmentDto = {
-                    date: '2020-09-09',
-                    time: '10:00',
+                    date: '2022-09-09',
+                    time: '13:00',
                     doctorId: 19
                 }
 
@@ -76,14 +76,14 @@ describe('End to End Testing', () => {
 
             describe('Update an appointment', () => {
                 const appointmentDto: UpdateAppointmentDto = {
-                    date: '2020-09-09',
-                    time: '11:00'
+                    date: '2021-09-09',
+                    time: '78:00'
                 }
 
                 it('must launch without authorization', () => {
                     return pactum
                         .spec()
-                        .patch(`${api.appointment.update}/6`)
+                        .patch(`${api.appointment.update}/22`)
                         .withBody(appointmentDto)
                         .expectStatus(401)
                 })
@@ -91,7 +91,7 @@ describe('End to End Testing', () => {
                 it('Should update an appointment', () => {
                     return pactum
                         .spec()
-                        .patch(`${api.appointment.update}/6`)
+                        .patch(`${api.appointment.update}/22`)
                         .withHeaders('Authorization', 'Bearer $S{token}')
                         .withBody(appointmentDto)
                         .expectStatus(200)
@@ -119,14 +119,31 @@ describe('End to End Testing', () => {
                 it('must launch without authorization', () => {
                     return pactum
                         .spec()
-                        .get(`${api.appointment.getOne}/6`)
+                        .get(`${api.appointment.getOne}/22`)
                         .expectStatus(401)
                 })
 
                 it('Should get one appointment', () => {
                     return pactum
                         .spec()
-                        .get(`${api.appointment.getOne}/6`)
+                        .get(`${api.appointment.getOne}/22`)
+                        .withHeaders('Authorization', 'Bearer $S{token}')
+                        .expectStatus(200)
+                })
+            })
+
+            describe('Delete an appointment', () => {
+                it('must launch without authorization', () => {
+                    return pactum
+                        .spec()
+                        .delete(`${api.appointment.delete}/22`)
+                        .expectStatus(401)
+                })
+
+                it('Should delete an appointment', () => {
+                    return pactum
+                        .spec()
+                        .delete(`${api.appointment.delete}/22`)
                         .withHeaders('Authorization', 'Bearer $S{token}')
                         .expectStatus(200)
                 })
