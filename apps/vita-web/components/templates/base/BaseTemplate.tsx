@@ -1,15 +1,8 @@
 import React from 'react'
-export interface IBaseTemplate {
-    sampleTextProp: string
-}
+export interface IBaseTemplate {}
 
-const BaseTemplate: React.FC<IBaseTemplate> = ({ sampleTextProp }) => {
-    return (
-        <>
-            <div className="">{sampleTextProp}</div>
-            <div className="">{sampleTextProp}</div>
-        </>
-    )
+const BaseTemplate: React.FC<IBaseTemplate> = () => {
+    return <div>hello world</div>
 }
 
 export default BaseTemplate
