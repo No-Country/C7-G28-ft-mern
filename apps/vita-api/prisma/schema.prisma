@@ -11,7 +11,6 @@ datasource db {
 }
 
 model User {
-<<<<<<< HEAD
   id        Int      @id @default(autoincrement())
   email     String   @unique
   hash      String
@@ -32,22 +31,7 @@ model User {
   updatedAt DateTime @updatedAt
   specialityId Int?
   speciality Speciality? @relation(fields: [specialityId], references: [id])
-=======
-  id                Int           @id @default(autoincrement())
-  email             String        @unique
-  hash              String
-  firstName         String
-  lastName          String
-  role              Role
-  vertificationCode String?       @default(uuid())
-  passwordResetCode String?
-  verified          Boolean       @default(false)
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
-  // status Status @default(ACTIVE)
   appointments      Appointment[]
->>>>>>> 962aa5257b86ded59d7812bce5da30da142bde15
-
   @@map("users")
 }
 
@@ -72,7 +56,6 @@ enum Role {
   PATIENT
 }
 
-<<<<<<< HEAD
 model Speciality {
   id        Int      @id @default(autoincrement())
   name      String @unique
@@ -82,7 +65,6 @@ model Speciality {
   users     User[]
 }
 
-=======
 enum StatusAppointment {
   PENDING
   APPROVED
@@ -94,4 +76,3 @@ enum Status {
   ACTIVE
   INACTIVE
 }
->>>>>>> 962aa5257b86ded59d7812bce5da30da142bde15

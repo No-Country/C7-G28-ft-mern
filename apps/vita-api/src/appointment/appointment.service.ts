@@ -91,8 +91,9 @@ export class AppointmentService {
                 select: this.selectQueryParameters()
             })
 
-            if (appointmentDB)
+            if (appointmentDB) {
                 throw new BadRequestException('Appointment already exists')
+            }
 
             if (user.role === Role.PATIENT) {
                 appointment = await this.prisma.appointment.updateMany({
@@ -117,8 +118,9 @@ export class AppointmentService {
                 })
             }
 
-            if (!appointment || appointment.count === 0)
+            if (!appointment || appointment.count === 0) {
                 throw new BadRequestException('Appointment not found')
+            }
 
             return { ...data, ...appointment }
         } catch (error) {
@@ -129,10 +131,11 @@ export class AppointmentService {
     async createAppointment(data: CreateAppointmentDto, user: User) {
         const { date, doctorId, time } = data
 
-        if (doctorId === user.id)
+        if (doctorId === user.id) {
             throw new BadRequestException(
                 `doctor id ${doctorId} and user id ${user.id} cannot be the same`
             )
+        }
 
         const doctorDB = await this.prisma.user.findFirst({
             where: { id: doctorId, role: Role.DOCTOR }
@@ -145,8 +148,9 @@ export class AppointmentService {
             select: this.selectQueryParameters()
         })
 
-        if (appointmentDB)
+        if (appointmentDB) {
             throw new BadRequestException('Appointment already exists')
+        }
 
         try {
             const appointment = await this.prisma.appointment.create({
@@ -185,8 +189,9 @@ export class AppointmentService {
                 })
             }
 
-            if (appointment.count === 0)
+            if (appointment.count === 0) {
                 throw new BadRequestException('Appointment not found')
+            }
         } catch (error) {
             this.handleExceptions(error)
         }
@@ -205,10 +210,11 @@ export class AppointmentService {
     }
 
     private handleExceptions(error: any): never {
-        if (error.code === 'P2025')
+        if (error.code === 'P2025') {
             throw new BadRequestException(error.meta.cause)
+        }
 
         console.log(error)
-        throw new InternalServerErrorException(`Please check logs`)
+        throw new InternalServerErrorException('Please check logs')
     }
 }
