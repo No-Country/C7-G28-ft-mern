@@ -6,7 +6,9 @@ import {
     Patch,
     Param,
     Delete,
-    UseGuards
+    UseGuards,
+    UseInterceptors,
+    UploadedFiles
 } from '@nestjs/common'
 import { RolesGuard } from '../auth/guard/roles.guard'
 import { JwtGuard } from '../auth/guard'
@@ -15,6 +17,9 @@ import { CreateDiagnosticDto } from './dto/create-diagnostic.dto'
 import { UpdateDiagnosticDto } from './dto/update-diagnostic.dto'
 import { Roles } from '../auth/decorator/roles.decorator'
 import { Role } from '@prisma/client'
+import { FilesInterceptor } from '@nestjs/platform-express'
+import { diskStorage } from 'multer'
+import { fileName, fileFilter } from '../file/helpers'
 
 @Controller('diagnostics')
 export class DiagnosticController {
@@ -23,8 +28,26 @@ export class DiagnosticController {
     @Post()
     @UseGuards(JwtGuard, RolesGuard)
     @Roles(Role.DOCTOR)
-    create(@Body() data: CreateDiagnosticDto) {
-        return this.diagnosticService.create(data)
+    @UseInterceptors(
+        FilesInterceptor('files', 3, {
+            fileFilter,
+            storage: diskStorage({ filename: fileName })
+        })
+    )
+    create(
+        @UploadedFiles() files: Express.Multer.File[],
+        @Body() data: CreateDiagnosticDto
+    ) {
+        console.log(
+            '🚀 ~ file: diagnostic.controller.ts ~ line 41 ~ DiagnosticController ~ data',
+            data
+        )
+        console.log(
+            '🚀 ~ file: diagnostic.controller.ts ~ line 39 ~ DiagnosticController ~ files',
+            files
+        )
+
+        return this.diagnosticService.create(data, files)
     }
 
     @Get()

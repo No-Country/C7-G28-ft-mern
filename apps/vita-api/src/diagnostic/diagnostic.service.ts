@@ -7,17 +7,21 @@ import { Status } from '@prisma/client'
 import { PrismaService } from '../prisma/prisma.service'
 import { CreateDiagnosticDto } from './dto/create-diagnostic.dto'
 import { UpdateDiagnosticDto } from './dto/update-diagnostic.dto'
+import { FileService } from '../file/file.service'
 
 @Injectable()
 export class DiagnosticService {
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly fileService: FileService
+    ) {}
 
-    async create(data: CreateDiagnosticDto) {
+    async create(data: CreateDiagnosticDto, files: Express.Multer.File[]) {
         try {
             const { name, appointmentId, description } = data
 
             const appointmentDB = await this.prisma.appointment.findFirst({
-                where: { id: appointmentId, status: Status.ACTIVE }
+                where: { id: Number(appointmentId), status: Status.ACTIVE }
             })
 
             if (!appointmentDB)
@@ -28,18 +32,26 @@ export class DiagnosticService {
             const diagnostic = await this.prisma.diagnostic.create({
                 data: {
                     name,
-                    appointmentId,
+                    appointmentId: Number(appointmentId),
                     description,
                     status: 'ACTIVE'
                 },
                 select: this.selectQueryParameters()
             })
 
-            return diagnostic
+            let url = undefined
+
+            if (files.length > 0) {
+                url = await this.fileService.uploadImagesToCloudinary(files)
+            }
+
+            return { ...diagnostic, url }
         } catch (error) {
             this.handleExceptions(error)
         }
     }
+
+    private async uploadingImgsPath() {}
 
     findAllDiagnostics() {
         try {

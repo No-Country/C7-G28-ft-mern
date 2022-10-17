@@ -24,10 +24,13 @@ export class CreateDiagnosticDto {
     @IsString()
     description: string
 
-    @ApiProperty({ required: true, type: Number })
-    @IsNumber()
-    @IsPositive()
+    @ApiProperty({ required: true, type: String })
+    @IsNotEmpty()
+    @IsString()
     appointmentId: number
+
+    @ApiProperty({ required: false, type: Object })
+    files?: any
 
     @ApiProperty({ required: false, type: String })
     @IsEnum(Status)

@@ -13,7 +13,7 @@ export class FileService {
         return { urls: imgsUrl }
     }
 
-    async saveFile(file: Express.Multer.File): Promise<string> {
+    private async saveFile(file: Express.Multer.File): Promise<string> {
         const { secure_url: secureUrl } = await cloudinary.uploader.upload(
             file.path,
             { folder: 'test' }
