@@ -24,7 +24,7 @@ const Footer: React.FC<IFooter> = () => {
                     </button>
                 </div>
             </div>
-            <div className="flex py-36 px-40 gap-40">
+            <div className="flex pt-36 pb-20 px-40 gap-40">
                 <div className="flex flex-col items-start gap-[3.125rem] text-xl">
                     <Image
                         src={logo}
@@ -79,7 +79,7 @@ const Footer: React.FC<IFooter> = () => {
                         <h2 className="text-3xl font-medium">
                             <span>Company</span>
                         </h2>
-                        <ul className="flex flex-col gap-10 text-2xl">
+                        <ul className="flex flex-col gap-10 text-xl">
                             <li className="cursor-pointer">
                                 <Link href="/">Home</Link>
                             </li>
@@ -101,7 +101,7 @@ const Footer: React.FC<IFooter> = () => {
                         <h2 className="text-3xl font-medium">
                             <span>Treatment</span>
                         </h2>
-                        <ul className="flex flex-col gap-10 text-2xl">
+                        <ul className="flex flex-col gap-10 text-xl">
                             <li className="cursor-pointer">
                                 General Diagnosis
                             </li>
@@ -126,7 +126,7 @@ const Footer: React.FC<IFooter> = () => {
                         <h2 className="text-3xl font-medium">
                             <span>Support</span>
                         </h2>
-                        <ul className="flex flex-col gap-10 text-2xl">
+                        <ul className="flex flex-col gap-10 text-xl">
                             <li className="cursor-pointer">
                                 <Link href="/">Help Center</Link>
                             </li>

@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import logo from '../../../public/logo.svg'
 import DownArrow from '../../../public/icons/down_arrow'
 import Link from 'next/link'
+import Router from 'next/router'
 
 export interface INavBar {}
 
@@ -40,7 +41,10 @@ const NavBar: React.FC<INavBar> = () => {
                         <Link href="#">About Us</Link>
                     </li>
                 </ul>
-                <button className="border-[2px] border-secondary-900 px-9 py-1 rounded-lg">
+                <button
+                    className="border-[2px] border-secondary-900 px-9 py-1 rounded-lg"
+                    onClick={() => Router.push('/auth/login')}
+                >
                     <span className="text-color-text text-lg">Login</span>
                 </button>
             </nav>
@@ -65,7 +69,10 @@ const NavBar: React.FC<INavBar> = () => {
 
                 {isMenuOpen ? (
                     <div className="fixed top-[6.6rem] right-0 w-full h-1/2 border-l border-color-text/30 flex flex-col border-b justify-center items-center pt-12 gap-10 pb-12">
-                        <button className="border-[2px] border-secondary-900 px-9 py-1 rounded-lg">
+                        <button
+                            className="border-[2px] border-secondary-900 px-9 py-1 rounded-lg"
+                            onClick={() => Router.push('/auth/login')}
+                        >
                             <span className="text-color-text text-lg">
                                 Login
                             </span>
