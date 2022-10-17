@@ -7,6 +7,9 @@ import { api, signUpUser } from './utils.testing'
 import { AuthDtoSignUp } from 'src/auth/dto'
 import { EditUserDto } from 'src/user/dto'
 import { SpecialityDto } from 'src/speciality/dto'
+import { CreateAppointmentDto } from '../src/appointment/dto/create-appointment.dto'
+import { UpdateAppointmentDto } from '../src/appointment/dto/update-appointment.dto'
+import { Appointment } from 'prisma/prisma-client'
 
 describe('End to End Testing', () => {
     let app: INestApplication
@@ -49,6 +52,19 @@ describe('End to End Testing', () => {
 
                     .stores('id', 'id')
             })
+
+            it("Should create a doctor if the role is 'doctor'", () => {
+                return pactum
+                    .spec()
+                    .post(api.auth.signup)
+                    .withBody({
+                        ...dto,
+                        role: 'DOCTOR',
+                        email: 'doctor1@gmass.com'
+                    })
+                    .expectStatus(201)
+            })
+
             describe("Shouldn't create a new user if", () => {
                 it('email is not provided', () => {
                     return pactum
@@ -191,6 +207,7 @@ describe('End to End Testing', () => {
             })
         })
     })
+
     describe('User', () => {
         describe('Get User', () => {
             it('Should get the current user if a token is provided', () => {
@@ -271,6 +288,140 @@ describe('End to End Testing', () => {
                 return pactum
                     .spec()
                     .delete(`${api.speciality.delete}/Dentist`)
+                    .expectStatus(200)
+            })
+        })
+    })
+
+    describe('Appointment', () => {
+        describe('Create an appointment', () => {
+            const appointmentDto: CreateAppointmentDto = {
+                date: '2022-09-09',
+                time: '13:00',
+                doctorId: 2
+            }
+
+            it('Must launch without authorization', () => {
+                return pactum
+                    .spec()
+                    .post(api.appointment.create)
+                    .withBody(appointmentDto)
+                    .expectStatus(401)
+            })
+
+            it('Should create an appointment', () => {
+                return pactum
+                    .spec()
+                    .post(api.appointment.create)
+                    .withHeaders({
+                        Authorization: 'Bearer $S{token}'
+                    })
+                    .withBody(appointmentDto)
+                    .expectStatus(201)
+                    .inspect()
+            })
+
+            it('Should throw if doctorId is missing', () => {
+                return pactum
+                    .spec()
+                    .post(api.appointment.create)
+                    .withHeaders({
+                        Authorization: 'Bearer $S{token}'
+                    })
+                    .withBody({ ...appointmentDto, doctorId: undefined })
+                    .expectStatus(400)
+            })
+
+            it('Should throw if date is empty', () => {
+                return pactum
+                    .spec()
+                    .post(api.appointment.create)
+                    .withHeaders('Authorization', 'Bearer $S{token}')
+                    .withBody({ ...appointmentDto, date: '' })
+                    .expectStatus(400)
+            })
+
+            it('Should throw if time is empty', () => {
+                return pactum
+                    .spec()
+                    .post(api.appointment.create)
+                    .withHeaders('Authorization', 'Bearer $S{token}')
+                    .withBody({ ...appointmentDto, time: '' })
+                    .expectStatus(400)
+            })
+        })
+
+        describe('Update an appointment', () => {
+            const appointmentDto: UpdateAppointmentDto = {
+                date: '2021-09-09',
+                time: '78:00'
+            }
+
+            it('must launch without authorization', () => {
+                return pactum
+                    .spec()
+                    .patch(`${api.appointment.update}/22`)
+                    .withBody(appointmentDto)
+                    .expectStatus(401)
+            })
+
+            it('Should update an appointment', () => {
+                return pactum
+                    .spec()
+                    .patch(`${api.appointment.update}/1`)
+                    .withHeaders('Authorization', 'Bearer $S{token}')
+                    .withBody(appointmentDto)
+                    .expectStatus(200)
+            })
+        })
+
+        describe('Get all appointments', () => {
+            it('must launch without authorization', () => {
+                return pactum
+                    .spec()
+                    .get(api.appointment.getAll)
+                    .expectStatus(401)
+            })
+
+            it('Should get all appointments', () => {
+                return pactum
+                    .spec()
+                    .get(api.appointment.getAll)
+                    .withHeaders('Authorization', 'Bearer $S{token}')
+                    .expectStatus(200)
+            })
+        })
+
+        describe('Get one appointment', () => {
+            it('must launch without authorization', () => {
+                return pactum
+                    .spec()
+                    .get(`${api.appointment.getOne}/1`)
+                    .expectStatus(401)
+            })
+
+            it('Should get one appointment', () => {
+                return pactum
+                    .spec()
+                    .get(`${api.appointment.getOne}/1`)
+                    .withHeaders('Authorization', 'Bearer $S{token}')
+                    .expectStatus(200)
+            })
+        })
+
+        describe('Delete an appointment', () => {
+            it('must launch without authorization', () => {
+                return pactum
+                    .spec()
+                    .delete(`${api.appointment.delete}/1`)
+                    .expectStatus(401)
+            })
+
+            it('Should delete an appointment', () => {
+                return pactum
+                    .spec()
+                    .delete(`${api.appointment.delete}/1`)
+                    .withHeaders('Authorization', 'Bearer $S{token}')
                     .expectStatus(200)
             })
         })

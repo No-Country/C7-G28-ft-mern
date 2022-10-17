@@ -31,8 +31,22 @@ model User {
   updatedAt DateTime @updatedAt
   specialityId Int?
   speciality Speciality? @relation(fields: [specialityId], references: [id])
-
+  appointments      Appointment[]
   @@map("users")
+}
+
+model Appointment {
+  id                Int               @id @default(autoincrement())
+  User              User              @relation(fields: [userId], references: [id])
+  userId            Int
+  date              String
+  doctorId          Int
+  time              String
+  statusAppointment StatusAppointment @default(PENDING)
+
+  status Status @default(ACTIVE)
+
+  @@map("appointments")
 }
 
 enum Role {
@@ -51,3 +65,14 @@ model Speciality {
   users     User[]
 }
 
+enum StatusAppointment {
+  PENDING
+  APPROVED
+  CANCELED
+  COMPLETED
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+}

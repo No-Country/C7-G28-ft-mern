@@ -16,11 +16,18 @@ const api = {
         getAll: 'http://localhost:3333/api/specialities/all',
         getOne: 'http://localhost:3333/api/specialities/one',
         delete: 'http://localhost:3333/api/specialities/delete'
+    },
+    appointment: {
+        create: 'http://localhost:3333/api/appointments',
+        getAll: 'http://localhost:3333/api/appointments',
+        getOne: 'http://localhost:3333/api/appointments',
+        delete: 'http://localhost:3333/api/appointments',
+        update: 'http://localhost:3333/api/appointments'
     }
 }
 
 const signUpUser = {
-    email: 'jorgito123456783423@gmail.com',
+    email: 'jorgito123456783423@gmas.com',
     password: 'password',
     firstName: 'Jorge',
     lastName: 'Perez',

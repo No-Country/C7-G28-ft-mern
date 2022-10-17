@@ -5,6 +5,7 @@ import { UserModule } from './user/user.module'
 import { AuthModule } from './auth/auth.module'
 import { NodemailerModule } from './nodemailer/nodemailer.module'
 import { SpecialityModule } from './speciality/speciality.module'
+import { AppointmentModule } from './appointment/appointment.module'
 
 @Module({
     imports: [
@@ -13,7 +14,8 @@ import { SpecialityModule } from './speciality/speciality.module'
         UserModule,
         AuthModule,
         NodemailerModule,
-        SpecialityModule
+        SpecialityModule,
+        AppointmentModule
     ]
 })
 export class AppModule {}
