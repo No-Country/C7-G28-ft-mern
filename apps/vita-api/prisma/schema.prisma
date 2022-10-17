@@ -56,9 +56,9 @@ model Diagnostic {
 }
 
 model Img {
-  id            Int    @id @default(autoincrement())
-  descriptionId String
-  status        Status @default(ACTIVE)
+  id     Int    @id @default(autoincrement())
+  url    String
+  status Status @default(ACTIVE)
 
   diagnosticInImgs DiagnosticInImg[]
 
