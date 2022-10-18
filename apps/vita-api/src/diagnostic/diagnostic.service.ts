@@ -166,6 +166,16 @@ export class DiagnosticService {
 
     async deleteDiagnostic(id: number) {
         try {
+            const diagnostic = await this.findOneDiagnostic(id)
+
+            const imgsIds = []
+
+            diagnostic.diagnosticInImgs.forEach(diagnosticInImg => {
+                imgsIds.push({ id: diagnosticInImg.Img.id })
+            })
+
+            await this.fileService.disableDiagnosticImgs(id, imgsIds)
+
             await this.prisma.diagnostic.updateMany({
                 where: { id, status: Status.ACTIVE },
                 data: { status: Status.INACTIVE }
