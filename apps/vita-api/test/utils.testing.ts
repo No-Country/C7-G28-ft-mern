@@ -1,28 +1,41 @@
+const PORT = 3333
+
 const api = {
     auth: {
-        signup: 'http://localhost:3333/api/auth/signup',
-        signin: 'http://localhost:3333/api/auth/signin'
+        signup: `http://localhost:${PORT}/api/auth/signup`,
+        signin: `http://localhost:${PORT}/api/auth/signin`
     },
     user: {
-        getAll: 'http://localhost:3333/api/users/all',
-        getOne: 'http://localhost:3333/api/users/one',
-        update: 'http://localhost:3333/api/users/update',
-        getMe: 'http://localhost:3333/api/users/me',
-        verify: 'http://localhost:3333/api/users/verify',
-        speciality: 'http://localhost:3333/api/users/speciality'
+        getAll: `http://localhost:${PORT}/api/users/all`,
+        getOne: `http://localhost:${PORT}/api/users/one`,
+        update: `http://localhost:${PORT}/api/users/update`,
+        getMe: `http://localhost:${PORT}/api/users/me`,
+        verify: `http://localhost:${PORT}/api/users/verify`,
+        specialiy: `http://localhost:${PORT}/api/users/speciality`
     },
     speciality: {
-        create: 'http://localhost:3333/api/specialities/create',
-        getAll: 'http://localhost:3333/api/specialities/all',
-        getOne: 'http://localhost:3333/api/specialities/one',
-        delete: 'http://localhost:3333/api/specialities/delete'
+        create: `http://localhost:${PORT}/api/specialities/create`,
+        getAll: `http://localhost:${PORT}/api/specialities/all`,
+        getOne: `http://localhost:${PORT}/api/specialities/one`,
+        delete: `http://localhost:${PORT}/api/specialities/delete`
     },
     appointment: {
-        create: 'http://localhost:3333/api/appointments',
-        getAll: 'http://localhost:3333/api/appointments',
-        getOne: 'http://localhost:3333/api/appointments',
-        delete: 'http://localhost:3333/api/appointments',
-        update: 'http://localhost:3333/api/appointments'
+        create: `http://localhost:${PORT}/api/appointments`,
+        getAll: `http://localhost:${PORT}/api/appointments`,
+        getOne: `http://localhost:${PORT}/api/appointments`,
+        delete: `http://localhost:${PORT}/api/appointments`,
+        update: `http://localhost:${PORT}/api/appointments`
+    },
+    diagnostic: {
+        create: `http://localhost:${PORT}/api/diagnostics`,
+        getAll: `http://localhost:${PORT}/api/diagnostics`,
+        getOne: `http://localhost:${PORT}/api/diagnostics`,
+        delete: `http://localhost:${PORT}/api/diagnostics`,
+        update: `http://localhost:${PORT}/api/diagnostics`
+    },
+    file: {
+        getOne: `http://localhost:${PORT}/api/files/one`,
+        getAll: `http://localhost:${PORT}/api/files/all`
     }
 }
 
