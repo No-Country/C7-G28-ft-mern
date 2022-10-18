@@ -187,5 +187,38 @@ describe('End to End Testing', () => {
                 })
             })
         })
+
+        describe('File', () => {
+            describe('Get all files', () => {
+                it('must launch without authorization', () => {
+                    return pactum.spec().get(api.file.getAll).expectStatus(401)
+                })
+
+                it('Should get all files', () => {
+                    return pactum
+                        .spec()
+                        .get(api.file.getAll)
+                        .withHeaders('Authorization', 'Bearer $S{token}')
+                        .expectStatus(200)
+                })
+            })
+
+            describe('Get one file', () => {
+                it('must launch without authorization', () => {
+                    return pactum
+                        .spec()
+                        .get(`${api.file.getOne}/27`)
+                        .expectStatus(401)
+                })
+
+                it('Should get one file', () => {
+                    return pactum
+                        .spec()
+                        .get(`${api.file.getOne}/27`)
+                        .withHeaders('Authorization', 'Bearer $S{token}')
+                        .expectStatus(200)
+                })
+            })
+        })
     })
 })

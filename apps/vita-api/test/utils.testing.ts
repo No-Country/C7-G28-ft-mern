@@ -32,6 +32,10 @@ const api = {
         getOne: `http://localhost:${PORT}/api/diagnostics`,
         delete: `http://localhost:${PORT}/api/diagnostics`,
         update: `http://localhost:${PORT}/api/diagnostics`
+    },
+    file: {
+        getOne: `http://localhost:${PORT}/api/files/one`,
+        getAll: `http://localhost:${PORT}/api/files/all`
     }
 }
 
