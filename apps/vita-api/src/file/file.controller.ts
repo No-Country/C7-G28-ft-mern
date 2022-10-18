@@ -32,14 +32,14 @@ export class FileController {
         return this.fileService.uploadImagesToCloudinary(files)
     }
 
-    @Get('me/:id')
+    @Get('one/:id')
     @UseGuards(JwtGuard, RolesGuard)
     @Roles(Role.PATIENT, Role.DOCTOR)
     findOne(@Param('id') id: string) {
         return this.fileService.findOne(+id)
     }
 
-    @Get('getAll')
+    @Get('all')
     @UseGuards(JwtGuard, RolesGuard)
     @Roles(Role.PATIENT, Role.DOCTOR)
     findAll() {
