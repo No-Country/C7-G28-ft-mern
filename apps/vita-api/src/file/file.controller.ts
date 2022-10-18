@@ -14,7 +14,6 @@ import { fileName, fileFilter } from './helpers'
 import { RolesGuard, JwtGuard } from '../auth/guard'
 import { Role } from '@prisma/client'
 import { Roles } from '../auth/decorator/roles.decorator'
-import { DeleteFileDto } from './dto/delete-file.dto'
 
 @Controller('files')
 export class FileController {

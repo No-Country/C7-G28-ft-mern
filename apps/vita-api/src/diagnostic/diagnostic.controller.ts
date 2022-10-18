@@ -38,15 +38,6 @@ export class DiagnosticController {
         @UploadedFiles() files: Express.Multer.File[],
         @Body() data: CreateDiagnosticDto
     ) {
-        console.log(
-            '🚀 ~ file: diagnostic.controller.ts ~ line 41 ~ DiagnosticController ~ data',
-            data
-        )
-        console.log(
-            '🚀 ~ file: diagnostic.controller.ts ~ line 39 ~ DiagnosticController ~ files',
-            files
-        )
-
         return this.diagnosticService.create(data, files)
     }
 
