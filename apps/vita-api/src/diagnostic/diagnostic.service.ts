@@ -42,44 +42,16 @@ export class DiagnosticService {
             let urls = undefined
 
             if (files.length > 0) {
-                urls = await this.uploadingImgsPathDB(files, diagnostic.id)
+                urls = await this.fileService.uploadingImgsPathDB(
+                    files,
+                    diagnostic.id
+                )
             }
 
             return { ...diagnostic, ...urls }
         } catch (error) {
             this.handleExceptions(error)
         }
-    }
-
-    private async uploadingImgsPathDB(
-        files: Express.Multer.File[],
-        diagnosticId: number
-    ) {
-        const { urls } = await this.fileService.uploadImagesToCloudinary(files)
-
-        const urlsPromise = urls.map(async url => {
-            return await this.prisma.img.create({
-                data: {
-                    url,
-                    status: Status.ACTIVE
-                },
-                select: {
-                    id: true
-                }
-            })
-        })
-
-        const urlsById = await Promise.all(urlsPromise)
-
-        await this.prisma.diagnosticInImg.createMany({
-            data: urlsById.map(url => ({
-                diagnosticId,
-                imgId: url.id,
-                status: Status.ACTIVE
-            }))
-        })
-
-        return { urls }
     }
 
     findAllDiagnostics() {

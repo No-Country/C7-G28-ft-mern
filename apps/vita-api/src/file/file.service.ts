@@ -25,6 +25,37 @@ export class FileService {
         return secureUrl
     }
 
+    async uploadingImgsPathDB(
+        files: Express.Multer.File[],
+        diagnosticId: number
+    ) {
+        const { urls } = await this.uploadImagesToCloudinary(files)
+
+        const urlsPromise = urls.map(async url => {
+            return await this.prisma.img.create({
+                data: {
+                    url,
+                    status: Status.ACTIVE
+                },
+                select: {
+                    id: true
+                }
+            })
+        })
+
+        const urlsById = await Promise.all(urlsPromise)
+
+        await this.prisma.diagnosticInImg.createMany({
+            data: urlsById.map(url => ({
+                diagnosticId,
+                imgId: url.id,
+                status: Status.ACTIVE
+            }))
+        })
+
+        return { urls }
+    }
+
     async disableDiagnosticImgs(
         diagnosticId: number,
         imgsIds: { id: number }[]
