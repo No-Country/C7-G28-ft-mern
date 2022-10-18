@@ -3,7 +3,7 @@ import {
     Injectable,
     InternalServerErrorException
 } from '@nestjs/common'
-import { Status } from '@prisma/client'
+import { Img, Status } from '@prisma/client'
 import { PrismaService } from '../prisma/prisma.service'
 import { CreateDiagnosticDto } from './dto/create-diagnostic.dto'
 import { UpdateDiagnosticDto } from './dto/update-diagnostic.dto'
@@ -39,19 +39,48 @@ export class DiagnosticService {
                 select: this.selectQueryParameters()
             })
 
-            let url = undefined
+            let urls = undefined
 
             if (files.length > 0) {
-                url = await this.fileService.uploadImagesToCloudinary(files)
+                urls = await this.uploadingImgsPathDB(files, diagnostic.id)
             }
 
-            return { ...diagnostic, url }
+            return { ...diagnostic, ...urls }
         } catch (error) {
             this.handleExceptions(error)
         }
     }
 
-    private async uploadingImgsPath() {}
+    private async uploadingImgsPathDB(
+        files: Express.Multer.File[],
+        diagnosticId: number
+    ) {
+        const { urls } = await this.fileService.uploadImagesToCloudinary(files)
+
+        const urlsPromise = urls.map(async url => {
+            return await this.prisma.img.create({
+                data: {
+                    url,
+                    status: Status.ACTIVE
+                },
+                select: {
+                    id: true
+                }
+            })
+        })
+
+        const urlsById = await Promise.all(urlsPromise)
+
+        await this.prisma.diagnosticInImg.createMany({
+            data: urlsById.map(url => ({
+                diagnosticId,
+                imgId: url.id,
+                status: Status.ACTIVE
+            }))
+        })
+
+        return { urls }
+    }
 
     findAllDiagnostics() {
         try {
