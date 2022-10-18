@@ -29,6 +29,8 @@ async function bootstrap() {
 
     const PORT = process.env.PORT || 3001
 
+    app.enableCors()
+
     await app.listen(PORT)
     logger.log(`Application listening on port ${PORT}`)
 }
