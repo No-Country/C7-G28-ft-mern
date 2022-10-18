@@ -19,9 +19,10 @@ export class DiagnosticService {
     async create(data: CreateDiagnosticDto, files: Express.Multer.File[]) {
         try {
             const { name, appointmentId, description } = data
+            const formatappointmentId = Number(appointmentId)
 
             const appointmentDB = await this.prisma.appointment.findFirst({
-                where: { id: Number(appointmentId), status: Status.ACTIVE }
+                where: { id: formatappointmentId, status: Status.ACTIVE }
             })
 
             if (!appointmentDB) {
@@ -33,14 +34,14 @@ export class DiagnosticService {
             const diagnostic = await this.prisma.diagnostic.create({
                 data: {
                     name,
-                    appointmentId: Number(appointmentId),
+                    appointmentId: formatappointmentId,
                     description,
                     status: 'ACTIVE'
                 },
                 select: this.selectQueryParameters()
             })
 
-            let urls
+            let urls = null
 
             if (files.length > 0) {
                 urls = await this.fileService.uploadingImgsPathDB(
@@ -49,7 +50,9 @@ export class DiagnosticService {
                 )
             }
 
-            return { ...diagnostic, ...urls }
+            if (urls) return { diagnostic, urls }
+
+            return { diagnostic }
         } catch (error) {
             this.handleExceptions(error)
         }
@@ -123,12 +126,14 @@ export class DiagnosticService {
         try {
             const { name, description, appointmentId } = data
 
+            const formatappointmentId = Number(appointmentId)
+
             const diagnostic = await this.prisma.diagnostic.updateMany({
                 where: { id, status: Status.ACTIVE },
                 data: {
                     name,
                     description,
-                    appointmentId
+                    appointmentId: formatappointmentId
                 }
             })
 
@@ -191,6 +196,7 @@ export class DiagnosticService {
         if (error.code === 'P2003') throw new BadRequestException(error.meta)
 
         console.log(error)
+
         throw new InternalServerErrorException('Please check logs')
     }
 }

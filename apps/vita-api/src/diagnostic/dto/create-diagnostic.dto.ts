@@ -20,7 +20,7 @@ export class CreateDiagnosticDto {
     @ApiProperty({ required: true, type: String })
     @IsNotEmpty()
     @IsString()
-    appointmentId: number
+    appointmentId: string
 
     @ApiProperty({ required: false, type: Object })
     @IsOptional()

@@ -38,7 +38,7 @@ export class DiagnosticController {
         @UploadedFiles() files: Express.Multer.File[],
         @Body() data: CreateDiagnosticDto
     ) {
-        return this.diagnosticService.create(data, files)
+        return this.diagnosticService.create(data, (files = []))
     }
 
     @Get()
@@ -69,7 +69,7 @@ export class DiagnosticController {
         @Body() data: UpdateDiagnosticDto,
         @UploadedFiles() files: Express.Multer.File[]
     ) {
-        return this.diagnosticService.updateDiagnostic(+id, data, files)
+        return this.diagnosticService.updateDiagnostic(+id, data, (files = []))
     }
 
     @Delete(':id')

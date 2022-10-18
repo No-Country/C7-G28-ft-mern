@@ -205,6 +205,17 @@ describe('End to End Testing', () => {
                     .withBody({ email: dto.email, password: '' })
                     .expectStatus(400)
             })
+            it('Should sing in a doctor', () => {
+                return pactum
+                    .spec()
+                    .post(api.auth.signin)
+                    .withBody({
+                        email: 'doctor1@gmass.com',
+                        password: dto.password
+                    })
+                    .expectStatus(201)
+                    .stores('docToken', 'token')
+            })
         })
     })
 
@@ -433,32 +444,22 @@ describe('End to End Testing', () => {
             const diagnosticDto: CreateDiagnosticDto = {
                 name: 'Diagnostic 1',
                 description: 'Description 1',
-                appointmentId: 1
+                appointmentId: '1'
             }
 
             it('Must launch without authorization', () => {
                 return pactum
                     .spec()
-                    .post('http://localhost:3000/api/diagnostics')
+                    .post(api.diagnostic.create)
                     .withBody(diagnosticDto)
                     .expectStatus(401)
-            })
-
-            it('Should create a diagnostic', () => {
-                return pactum
-                    .spec()
-                    .post('http://localhost:3000/api/diagnostics')
-                    .withHeaders('Authorization', 'Bearer $S{token}')
-                    .withBody(diagnosticDto)
-                    .expectStatus(201)
-                    .stores('diagnosticId', 'id')
             })
 
             it('Should throw if name is empty', () => {
                 return pactum
                     .spec()
                     .post(api.diagnostic.create)
-                    .withHeaders('Authorization', 'Bearer $S{token}')
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
                     .withBody({ ...diagnosticDto, name: '' })
                     .expectStatus(400)
             })
@@ -467,7 +468,7 @@ describe('End to End Testing', () => {
                 return pactum
                     .spec()
                     .post(api.diagnostic.create)
-                    .withHeaders('Authorization', 'Bearer $S{token}')
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
                     .withBody({ ...diagnosticDto, description: '' })
                     .expectStatus(400)
             })
@@ -476,12 +477,22 @@ describe('End to End Testing', () => {
                 return pactum
                     .spec()
                     .post(api.diagnostic.create)
-                    .withHeaders('Authorization', 'Bearer $S{token}')
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
                     .withBody({
                         ...diagnosticDto,
                         appointmentId: undefined
                     })
                     .expectStatus(400)
+            })
+
+            it('Should create a diagnostic', () => {
+                return pactum
+                    .spec()
+                    .post(api.diagnostic.create)
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
+                    .withBody(diagnosticDto)
+                    .expectStatus(201)
+                    .stores('diagnosticId', 'id')
             })
         })
 
@@ -489,13 +500,13 @@ describe('End to End Testing', () => {
             const diagnosticDto: UpdateDiagnosticDto = {
                 name: 'Diagnostic 2',
                 description: 'Description 2',
-                appointmentId: 1
+                appointmentId: '1'
             }
 
             it('must launch without authorization', () => {
                 return pactum
                     .spec()
-                    .patch(`${api.diagnostic.update}/$S{diagnosticId}`)
+                    .patch(api.diagnostic.update + '/1')
                     .withBody(diagnosticDto)
                     .expectStatus(401)
             })
@@ -503,8 +514,8 @@ describe('End to End Testing', () => {
             it('Should update a diagnostic', () => {
                 return pactum
                     .spec()
-                    .patch(`${api.diagnostic.update}/$S{diagnosticId}`)
-                    .withHeaders('Authorization', 'Bearer $S{token}')
+                    .patch(api.diagnostic.update + '/1')
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
                     .withBody(diagnosticDto)
                     .expectStatus(200)
             })
@@ -512,37 +523,38 @@ describe('End to End Testing', () => {
             it('Should throw if name is missing', () => {
                 return pactum
                     .spec()
-                    .patch(`${api.diagnostic.update}/$S{diagnosticId}`)
-                    .withHeaders('Authorization', 'Bearer $S{token}')
+                    .patch(api.diagnostic.update + '/1')
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
                     .withBody({
                         description: diagnosticDto.description,
                         appointmentId: diagnosticDto.appointmentId
                     })
-                    .expectStatus(200)
+                    .expectStatus(400)
             })
 
             it('Should throw if description is missing', () => {
                 return pactum
                     .spec()
-                    .patch(`${api.diagnostic.update}/$S{diagnosticId}`)
-                    .withHeaders('Authorization', 'Bearer $S{token}')
+                    .patch(api.diagnostic.update + '/1')
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
                     .withBody({
                         name: diagnosticDto.name,
                         appointmentId: diagnosticDto.appointmentId
                     })
-                    .expectStatus(200)
+                    .expectStatus(400)
             })
 
             it('Should throw if appointmentId is missing', () => {
                 return pactum
                     .spec()
-                    .patch(`${api.diagnostic.update}/$S{diagnosticId}`)
-                    .withHeaders('Authorization', 'Bearer $S{token}')
+                    .patch(api.diagnostic.update + '/1')
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
                     .withBody({
                         name: diagnosticDto.name,
-                        description: diagnosticDto.description
+                        description: diagnosticDto.description,
+                        appointmentId: ''
                     })
-                    .expectStatus(200)
+                    .expectStatus(400)
             })
         })
 
@@ -558,7 +570,7 @@ describe('End to End Testing', () => {
                 return pactum
                     .spec()
                     .get(api.diagnostic.getAll)
-                    .withHeaders('Authorization', 'Bearer $S{token}')
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
                     .expectStatus(200)
             })
         })
@@ -567,15 +579,15 @@ describe('End to End Testing', () => {
             it('must launch without authorization', () => {
                 return pactum
                     .spec()
-                    .get(`${api.diagnostic.getOne}/$S{diagnosticId}`)
+                    .get(api.diagnostic.getOne + '/1')
                     .expectStatus(401)
             })
 
             it('Should get one diagnostic', () => {
                 return pactum
                     .spec()
-                    .get(`${api.diagnostic.getOne}/$S{diagnosticId}`)
-                    .withHeaders('Authorization', 'Bearer $S{token}')
+                    .get(api.diagnostic.getOne + '/1')
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
                     .expectStatus(200)
             })
         })
@@ -584,15 +596,15 @@ describe('End to End Testing', () => {
             it('must launch without authorization', () => {
                 return pactum
                     .spec()
-                    .delete(`${api.diagnostic.delete}/$S{diagnosticId}`)
+                    .delete(api.diagnostic.delete + '/1')
                     .expectStatus(401)
             })
 
             it('Should delete a diagnostic', () => {
                 return pactum
                     .spec()
-                    .delete(`${api.diagnostic.delete}/$S{diagnosticId}`)
-                    .withHeaders('Authorization', 'Bearer $S{token}')
+                    .delete(api.diagnostic.delete + '/1')
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
                     .expectStatus(200)
             })
         })
@@ -607,7 +619,7 @@ describe('End to End Testing', () => {
                 return pactum
                     .spec()
                     .get(api.file.getAll)
-                    .withHeaders('Authorization', 'Bearer $S{token}')
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
                     .expectStatus(200)
             })
         })
@@ -624,7 +636,7 @@ describe('End to End Testing', () => {
                 return pactum
                     .spec()
                     .get(`${api.file.getOne}/1`)
-                    .withHeaders('Authorization', 'Bearer $S{token}')
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
                     .expectStatus(200)
             })
         })
