@@ -84,9 +84,27 @@ export class DiagnosticService {
 
     findAllDiagnostics() {
         try {
-            const diagnostics = this.prisma.diagnostic.findMany({
+            let diagnostics = this.prisma.diagnostic.findMany({
                 where: { status: Status.ACTIVE },
-                select: this.selectQueryParameters()
+                select: {
+                    diagnosticInImgs: {
+                        where: { status: Status.ACTIVE },
+                        select: {
+                            Img: {
+                                select: {
+                                    status: false,
+                                    url: true,
+                                    id: true
+                                }
+                            },
+                            id: false,
+                            diagnosticId: false,
+                            imgId: false,
+                            status: false
+                        }
+                    },
+                    ...this.selectQueryParameters()
+                }
             })
 
             return diagnostics
@@ -98,7 +116,25 @@ export class DiagnosticService {
     async findOneDiagnostic(id: number) {
         const diagnostic = await this.prisma.diagnostic.findFirst({
             where: { id, status: Status.ACTIVE },
-            select: this.selectQueryParameters()
+            select: {
+                diagnosticInImgs: {
+                    where: { status: Status.ACTIVE },
+                    select: {
+                        Img: {
+                            select: {
+                                status: false,
+                                url: true,
+                                id: true
+                            }
+                        },
+                        id: false,
+                        diagnosticId: false,
+                        imgId: false,
+                        status: false
+                    }
+                },
+                ...this.selectQueryParameters()
+            }
         })
 
         if (!diagnostic) throw new BadRequestException('Diagnostic not found')
@@ -132,7 +168,7 @@ export class DiagnosticService {
         try {
             await this.prisma.diagnostic.updateMany({
                 where: { id, status: Status.ACTIVE },
-                data: { status: 'INACTIVE' }
+                data: { status: Status.INACTIVE }
             })
         } catch (error) {
             this.handleExceptions(error)
