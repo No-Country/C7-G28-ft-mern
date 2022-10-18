@@ -1,4 +1,4 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateFileDto } from './create-file.dto';
+import { PartialType } from '@nestjs/mapped-types'
+import { DeleteFileDto } from './delete-file.dto'
 
-export class UpdateFileDto extends PartialType(CreateFileDto) {}
+export class UpdateFileDto extends PartialType(DeleteFileDto) {}

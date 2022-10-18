@@ -7,6 +7,53 @@ import { PrismaService } from '../prisma/prisma.service'
 export class FileService {
     constructor(private readonly prisma: PrismaService) {}
 
+    async findOne(id: number) {
+        try {
+            const img = await this.prisma.img.findFirst({
+                where: { id, status: Status.ACTIVE },
+                select: {
+                    id: true,
+                    url: true
+                }
+            })
+
+            if (!img)
+                throw new InternalServerErrorException(
+                    `Img by id ${id} not found`
+                )
+
+            return img
+        } catch (error) {
+            console.log(
+                '🚀 ~ file: file.service.ts ~ line 27 ~ FileService ~ findOne ~ error',
+                { error }
+            )
+
+            throw new InternalServerErrorException(`Please check logs`)
+        }
+    }
+
+    async findAll() {
+        try {
+            const imgs = await this.prisma.img.findMany({
+                where: { status: Status.ACTIVE },
+                select: {
+                    id: true,
+                    url: true
+                }
+            })
+
+            return imgs
+        } catch (error) {
+            console.log(
+                '🚀 ~ file: file.service.ts ~ line 48 ~ FileService ~ findAll ~ error',
+                { error }
+            )
+
+            throw new InternalServerErrorException(`Please check logs`)
+        }
+    }
+
     async uploadImagesToCloudinary(files: Express.Multer.File[]) {
         const imgs = files.map(async file => {
             return await this.saveFile(file)
