@@ -6,6 +6,8 @@ import { AuthModule } from './auth/auth.module'
 import { NodemailerModule } from './nodemailer/nodemailer.module'
 import { SpecialityModule } from './speciality/speciality.module'
 import { AppointmentModule } from './appointment/appointment.module'
+import { DiagnosticModule } from './diagnostic/diagnostic.module'
+import { FileModule } from './file/file.module'
 
 @Module({
     imports: [
@@ -15,7 +17,9 @@ import { AppointmentModule } from './appointment/appointment.module'
         AuthModule,
         NodemailerModule,
         SpecialityModule,
-        AppointmentModule
+        AppointmentModule,
+        DiagnosticModule,
+        FileModule
     ]
 })
 export class AppModule {}

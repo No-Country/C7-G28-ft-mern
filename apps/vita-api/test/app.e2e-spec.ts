@@ -9,7 +9,7 @@ import { EditUserDto } from 'src/user/dto'
 import { SpecialityDto } from 'src/speciality/dto'
 import { CreateAppointmentDto } from '../src/appointment/dto/create-appointment.dto'
 import { UpdateAppointmentDto } from '../src/appointment/dto/update-appointment.dto'
-import { Appointment } from 'prisma/prisma-client'
+import { CreateDiagnosticDto, UpdateDiagnosticDto } from '../src/diagnostic/dto'
 
 describe('End to End Testing', () => {
     let app: INestApplication
@@ -205,6 +205,17 @@ describe('End to End Testing', () => {
                     .withBody({ email: dto.email, password: '' })
                     .expectStatus(400)
             })
+            it('Should sing in a doctor', () => {
+                return pactum
+                    .spec()
+                    .post(api.auth.signin)
+                    .withBody({
+                        email: 'doctor1@gmass.com',
+                        password: dto.password
+                    })
+                    .expectStatus(201)
+                    .stores('docToken', 'token')
+            })
         })
     })
 
@@ -289,6 +300,7 @@ describe('End to End Testing', () => {
                     .spec()
                     .delete(`${api.speciality.delete}/Dentist`)
                     .expectStatus(200)
+                    .inspect()
             })
         })
     })
@@ -360,7 +372,7 @@ describe('End to End Testing', () => {
             it('must launch without authorization', () => {
                 return pactum
                     .spec()
-                    .patch(`${api.appointment.update}/22`)
+                    .patch(`${api.appointment.update}/1`)
                     .withBody(appointmentDto)
                     .expectStatus(401)
             })
@@ -409,19 +421,222 @@ describe('End to End Testing', () => {
             })
         })
 
-        describe('Delete an appointment', () => {
-            it('must launch without authorization', () => {
+        // describe('Delete an appointment', () => {
+        //     it('must launch without authorization', () => {
+        //         return pactum
+        //             .spec()
+        //             .delete(`${api.appointment.delete}/1`)
+        //             .expectStatus(401)
+        //     })
+
+        //     it('Should delete an appointment', () => {
+        //         return pactum
+        //             .spec()
+        //             .delete(`${api.appointment.delete}/1`)
+        //             .withHeaders('Authorization', 'Bearer $S{token}')
+        //             .expectStatus(200)
+        //     })
+        // })
+    })
+
+    describe('Diagnostic', () => {
+        describe('Create a diagnostic', () => {
+            const diagnosticDto: CreateDiagnosticDto = {
+                name: 'Diagnostic 1',
+                description: 'Description 1',
+                appointmentId: '1'
+            }
+
+            it('Must launch without authorization', () => {
                 return pactum
                     .spec()
-                    .delete(`${api.appointment.delete}/1`)
+                    .post(api.diagnostic.create)
+                    .withBody(diagnosticDto)
                     .expectStatus(401)
             })
 
-            it('Should delete an appointment', () => {
+            it('Should throw if name is empty', () => {
                 return pactum
                     .spec()
-                    .delete(`${api.appointment.delete}/1`)
-                    .withHeaders('Authorization', 'Bearer $S{token}')
+                    .post(api.diagnostic.create)
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
+                    .withBody({ ...diagnosticDto, name: '' })
+                    .expectStatus(400)
+            })
+
+            it('Should throw if description is empty', () => {
+                return pactum
+                    .spec()
+                    .post(api.diagnostic.create)
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
+                    .withBody({ ...diagnosticDto, description: '' })
+                    .expectStatus(400)
+            })
+
+            it('Should throw if appointmentId is missing', () => {
+                return pactum
+                    .spec()
+                    .post(api.diagnostic.create)
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
+                    .withBody({
+                        ...diagnosticDto,
+                        appointmentId: undefined
+                    })
+                    .expectStatus(400)
+            })
+
+            it('Should create a diagnostic', () => {
+                return pactum
+                    .spec()
+                    .post(api.diagnostic.create)
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
+                    .withBody(diagnosticDto)
+                    .expectStatus(201)
+                    .stores('diagnosticId', 'id')
+            })
+        })
+
+        describe('Update a diagnostic', () => {
+            const diagnosticDto: UpdateDiagnosticDto = {
+                name: 'Diagnostic 2',
+                description: 'Description 2',
+                appointmentId: '1'
+            }
+
+            it('must launch without authorization', () => {
+                return pactum
+                    .spec()
+                    .patch(api.diagnostic.update + '/1')
+                    .withBody(diagnosticDto)
+                    .expectStatus(401)
+            })
+
+            it('Should update a diagnostic', () => {
+                return pactum
+                    .spec()
+                    .patch(api.diagnostic.update + '/1')
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
+                    .withBody(diagnosticDto)
+                    .expectStatus(200)
+            })
+
+            it('Should throw if name is missing', () => {
+                return pactum
+                    .spec()
+                    .patch(api.diagnostic.update + '/1')
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
+                    .withBody({
+                        description: diagnosticDto.description,
+                        appointmentId: diagnosticDto.appointmentId
+                    })
+                    .expectStatus(400)
+            })
+
+            it('Should throw if description is missing', () => {
+                return pactum
+                    .spec()
+                    .patch(api.diagnostic.update + '/1')
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
+                    .withBody({
+                        name: diagnosticDto.name,
+                        appointmentId: diagnosticDto.appointmentId
+                    })
+                    .expectStatus(400)
+            })
+
+            it('Should throw if appointmentId is missing', () => {
+                return pactum
+                    .spec()
+                    .patch(api.diagnostic.update + '/1')
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
+                    .withBody({
+                        name: diagnosticDto.name,
+                        description: diagnosticDto.description,
+                        appointmentId: ''
+                    })
+                    .expectStatus(400)
+            })
+        })
+
+        describe('Get all diagnostics', () => {
+            it('must launch without authorization', () => {
+                return pactum
+                    .spec()
+                    .get(api.diagnostic.getAll)
+                    .expectStatus(401)
+            })
+
+            it('Should get all diagnostics', () => {
+                return pactum
+                    .spec()
+                    .get(api.diagnostic.getAll)
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
+                    .expectStatus(200)
+            })
+        })
+
+        describe('Get one diagnostic', () => {
+            it('must launch without authorization', () => {
+                return pactum
+                    .spec()
+                    .get(api.diagnostic.getOne + '/1')
+                    .expectStatus(401)
+            })
+
+            it('Should get one diagnostic', () => {
+                return pactum
+                    .spec()
+                    .get(api.diagnostic.getOne + '/1')
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
+                    .expectStatus(200)
+            })
+        })
+
+        describe('Delete a diagnostic', () => {
+            it('must launch without authorization', () => {
+                return pactum
+                    .spec()
+                    .delete(api.diagnostic.delete + '/1')
+                    .expectStatus(401)
+            })
+
+            it('Should delete a diagnostic', () => {
+                return pactum
+                    .spec()
+                    .delete(api.diagnostic.delete + '/1')
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
+                    .expectStatus(200)
+            })
+        })
+    })
+    describe('File', () => {
+        describe('Get all files', () => {
+            it('must launch without authorization', () => {
+                return pactum.spec().get(api.file.getAll).expectStatus(401)
+            })
+
+            it('Should get all files', () => {
+                return pactum
+                    .spec()
+                    .get(api.file.getAll)
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
+                    .expectStatus(200)
+            })
+        })
+
+        describe('Get one file', () => {
+            it('must launch without authorization', () => {
+                return pactum
+                    .spec()
+                    .get(`${api.file.getOne}/1`)
+                    .expectStatus(401)
+            })
+
+            it('Should get one file', () => {
+                return pactum
+                    .spec()
+                    .get(`${api.file.getOne}/1`)
+                    .withHeaders('Authorization', 'Bearer $S{docToken}')
                     .expectStatus(200)
             })
         })

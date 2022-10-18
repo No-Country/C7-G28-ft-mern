@@ -1,0 +1,33 @@
+import { ApiProperty } from '@nestjs/swagger'
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator'
+
+export enum Status {
+    ACTIVE = 'ACTIVE',
+    INACTIVE = 'INACTIVE'
+}
+
+export class CreateDiagnosticDto {
+    @ApiProperty({ required: true, type: String })
+    @IsNotEmpty()
+    @IsString()
+    name: string
+
+    @ApiProperty({ required: true, type: String })
+    @IsNotEmpty()
+    @IsString()
+    description: string
+
+    @ApiProperty({ required: true, type: String })
+    @IsNotEmpty()
+    @IsString()
+    appointmentId: string
+
+    @ApiProperty({ required: false, type: Object })
+    @IsOptional()
+    files?: any
+
+    @ApiProperty({ required: false, type: String })
+    @IsEnum(Status)
+    @IsOptional()
+    status?: string
+}
