@@ -67,8 +67,8 @@ model Img {
 
 model DiagnosticInImg {
   id           Int        @id @default(autoincrement())
-  diagnosticId Int        @unique
-  imgId        Int        @unique
+  diagnosticId Int
+  imgId        Int
   status       Status     @default(ACTIVE)
   Img          Img        @relation(fields: [imgId], references: [id])
   Diagnostics  Diagnostic @relation(fields: [diagnosticId], references: [id])
