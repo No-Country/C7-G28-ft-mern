@@ -114,7 +114,11 @@ export class DiagnosticService {
         return diagnostic
     }
 
-    async updateDiagnostic(id: number, data: UpdateDiagnosticDto) {
+    async updateDiagnostic(
+        id: number,
+        data: UpdateDiagnosticDto,
+        files: Express.Multer.File[]
+    ) {
         try {
             const { name, description, appointmentId } = data
 
@@ -129,6 +133,16 @@ export class DiagnosticService {
 
             if (!diagnostic.count || diagnostic.count === 0)
                 throw new BadRequestException('Diagnostic not found')
+
+            const diagnosticDB = await this.findOneDiagnostic(id)
+
+            const imgsIds = []
+
+            diagnosticDB.diagnosticInImgs.forEach(diagnosticInImg => {
+                imgsIds.push({ id: diagnosticInImg.Img.id })
+            })
+
+            await this.fileService.updateUrlDB(files, imgsIds)
 
             return { ...data, id }
         } catch (error) {

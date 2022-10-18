@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { Status } from '@prisma/client'
 import { v2 as cloudinary } from 'cloudinary'
 import { PrismaService } from '../prisma/prisma.service'
@@ -54,6 +54,25 @@ export class FileService {
         })
 
         return { urls }
+    }
+
+    async updateUrlDB(files: Express.Multer.File[], imgsIds: { id: number }[]) {
+        const { urls } = await this.uploadImagesToCloudinary(files)
+
+        if (urls.length > imgsIds.length) {
+            throw new InternalServerErrorException(
+                'The number of images does not match'
+            )
+        }
+
+        const imgsPromise = await urls.map(async (url, index) => {
+            return await this.prisma.img.updateMany({
+                where: { id: imgsIds[index].id, status: Status.ACTIVE },
+                data: { url: url }
+            })
+        })
+
+        await Promise.all(imgsPromise)
     }
 
     async disableDiagnosticImgs(

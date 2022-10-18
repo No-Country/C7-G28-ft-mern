@@ -67,8 +67,18 @@ export class DiagnosticController {
     @Patch(':id')
     @UseGuards(JwtGuard, RolesGuard)
     @Roles(Role.DOCTOR)
-    update(@Param('id') id: string, @Body() data: UpdateDiagnosticDto) {
-        return this.diagnosticService.updateDiagnostic(+id, data)
+    @UseInterceptors(
+        FilesInterceptor('files', 3, {
+            fileFilter,
+            storage: diskStorage({ filename: fileName })
+        })
+    )
+    update(
+        @Param('id') id: string,
+        @Body() data: UpdateDiagnosticDto,
+        @UploadedFiles() files: Express.Multer.File[]
+    ) {
+        return this.diagnosticService.updateDiagnostic(+id, data, files)
     }
 
     @Delete(':id')
