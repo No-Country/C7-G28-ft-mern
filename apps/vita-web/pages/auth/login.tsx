@@ -2,14 +2,47 @@ import Image from 'next/image'
 import logo from '../../public/logo.svg'
 import loginImage from '../../public/login-image.png'
 import Link from 'next/link'
-import React from 'react'
+import React, { useState } from 'react'
+import axios from 'axios'
 
 type Props = {}
 
+interface Credentials {
+    email: string
+    password: string
+}
+
 const Login = (props: Props) => {
+    const [credentials, setCredentials] = useState<Credentials>({
+        email: '',
+        password: ''
+    })
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target
+        setCredentials(prev => {
+            return { ...prev, [name]: value }
+        })
+    }
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        console.log('submit')
+
+        axios
+            .post('https://vita-api.onrender.com/api/auth/signin', credentials)
+            .then(res => {
+                console.log(res)
+
+                if (res.status === 201) {
+                    localStorage.setItem('token', res.data.token)
+                    window.location.href = '/dashboard'
+                } else {
+                    console.log('error')
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
     }
 
     return (
@@ -53,8 +86,11 @@ const Login = (props: Props) => {
                                 Email
                             </label>
                             <input
-                                type="text"
+                                type="email"
+                                name="email"
+                                required
                                 className="border-b border-primary-600 bg-transparent focus:outline-none focus:border-primary-900 pb-2"
+                                onChange={handleChange}
                             />
                         </div>
                         <div className="flex flex-col gap-4 w-4/6">
@@ -66,7 +102,9 @@ const Login = (props: Props) => {
                             </label>
                             <input
                                 type="paswword"
+                                name="password"
                                 className="border-b border-primary-600 bg-transparent focus:outline-none focus:border-primary-900 pb-2"
+                                onChange={handleChange}
                             />
                         </div>
                         <div className="flex flex-col w-full items-center gap-14">
